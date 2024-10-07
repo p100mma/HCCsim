@@ -36,6 +36,7 @@ A \code{list} with following elements:
 \item \code{f} Recalculated \code{f_E} giving the fraction of variance of proper clusters to explain (excluding "noise" clusters (\code{C_0}))
 \item \code{C_base_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{C_base}. It is output of \code{blockwisa_PCA_reconstruction} funtion.
 }
+}
 \description{
 Divide variables dataset based on input clustering and reconstruct clusters using at most k principal components
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/HCR.R
 \name{add_noise}
 \alias{add_noise}
-\title{Complement the missing variances of reconstructed variance by appropriate amount of independent white noise}
+\title{Complement the missing variances of reconstructed variables by appropriate amount of independent white noise}
 \usage{
 add_noise(Xg, X)
 }
@@ -15,5 +15,5 @@ add_noise(Xg, X)
 An updated matrix \code{Xg} with random noise added to each of the columns.
 }
 \description{
-Add \code{E_i} of noise from normal distribution to each reconstructed variable \code{X'_i} such that \code{var(X'_i)==var(X_i)} where \code{X_i} is a reference variable.
+Add \code{E_i} of noise from normal distribution to each reconstructed variable \code{Xg_i} such that \code{var(Xg_i)==var(X_i)} where \code{X_i} is a reference variable.
 }

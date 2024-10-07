@@ -15,11 +15,12 @@ rcorrData(D, rcorr.method = "pearson", p.adjust.method = "holm")
 }
 \value{
 A list storing all the important data about correlations in \code{D} with the following fields:
-\itemize
+\itemize{
 \item \code{N} Number of variables in \code{D}.
 \item \code{r} A vector of all correlation coefficients between all pairs of variables in \code{D}.
 \item \code{P} A vector of unadjusted p-values of \code{r}.
 \item \code{Pa} A vector of adjuste p-values of \code{r}.
+}
 }
 \description{
 Function utilizes \code{rcorr} from \code{Hmisc} package. It is less speed and memory efficient than \code{fastPearsonData} but is safer to use if input data is not properly cleaned.

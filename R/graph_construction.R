@@ -88,11 +88,12 @@ corData
 #' @param NA.warn Logical, if true (default), then a warning will be displayed if \code{D} contains any \code{NA} values.
 #' @param p.adjust.method The method of p-value adjustment used. For \code{D} with \code{N} columns, number of tests is \code{N*(N-1)*0.5}. Gets passed to argument \code{p.adjust.method} in a call of \code{p.adjust} function.
 #' @return A list storing all the important data about correlations in \code{D} with the following fields:
-#' \itemize
+#' \itemize{
 #' \item \code{N} Number of variables in \code{D}.
 #' \item \code{r} A vector of all correlation coefficients between all pairs of variables in \code{D}.
 #' \item \code{P} A vector of unadjusted p-values of \code{r}.
 #' \item \code{Pa} A vector of adjuste p-values of \code{r}.
+#'}
 #' @examples
 #' data(brca)
 #' rcorrData(brca) -> brca_corData
@@ -106,7 +107,7 @@ corData
 
 rcorrData<- function(D, rcorr.method='pearson',
 			p.adjust.method='holm'){
-rcorr_object<- rcorr(D, method= rcorr.method)
+rcorr_object<- rcorr(D, type= rcorr.method)
 ltr<-rcorr_object$r[lower.tri(rcorr_object$r)]
 corData<- list()
 corData$N= ncol(D)
@@ -118,18 +119,21 @@ corData
 
 #' Compute similarity matrix from input correlation coefficients
 #'
+#' Function takes compressed data about symmetric correlation matrix and builds a \code{WGCNA} style similarity matrix out of it, raising elements to \code{power} and zeroing out unsignificant correlations.
+#' 
 #' @param corData A list storing lower triangular halves of correlation and p-value matrices, see output of \code{fastPearsonData} or \code{rcorrData} for how it should be structured.
-#' @param addLoops Logical, if \code{TRUE}, diagonal of the similarity matrix will assume values of \code{1} nad \code {0} otherwise.
+#' @param addLoops Logical, if \code{TRUE}, diagonal of the similarity matrix will assume values of \code{1} nad \code{0} otherwise.
 #' @param power A power to which raise the absolute value of the correlation coefficients.
 #' @param level A significance level of adjusted p-values over which similarities are set to zero.
 #' @param return.lower.tri  A logical, if \code{TRUE} then function returns lower triangular half of the similarity matrix. Otherwise, full (symmetric) matrix of similarities is returned.
-#' @return Depending on the value of \code{return.lower.tri}, either a square, symmetric matrix of nonnegative similarities between objects ( \code{S[i,j]= abs(cor(i,j))^power} if \code{cor(i,j)} is significant at \code{level} after p-value adjustment), or a lower triangular half of that matrix (\code{S[lower.tri(S)]})
+#' @return Depending on the value of \code{return.lower.tri}, either a square, symmetric matrix of nonnegative similarities between objects ( \code{S[i,j]= abs(cor(X_i,X_j))^power} if \code{cor(X_i,X_j)} is significant at \code{level} after p-value adjustment), or a lower triangular half of that matrix (\code{S[lower.tri(S)]})
 #' @examples
 #' data(brca)
 #' brca_corData= fastPearsonData(brca)
 #' S= similarity_matrix( brca_corData)
 #' ncol(S)==ncol(brca)
 #' @export
+
 similarity_matrix<- function( corData, addLoops=TRUE, 
 				power=2, level=0.05,
 			     return.lower.tri=FALSE) {

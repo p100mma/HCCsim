@@ -24,7 +24,7 @@ get_full_reconstruction(
 \item{uncenter}{l}
 }
 \value{
-A matrix \code{Xg} which is the \code{g}-th order hierarchica l clustering reconstruction of correlated variables in \code{X}.
+A matrix \code{Xg} which is the \code{g}-th order hierarchical clustering reconstruction of correlated variables in \code{X}, where \code{g} is the number of levels in \code{hclustering_list} and \code{hcluster_blockPCA}.
 }
 \description{
 Given a HCD (hierarchical clustering decomposion of correlation structure) of a dataset, generate it's reconstruction (HCR) based on that HCD.

@@ -21,7 +21,7 @@ all_PC
 #' 
 #' @param sigma A covariance matrix to use. Must be positive definite.
 #' @param n_samples Number of samples to generate
-#' @return A matrix of generated samples from a mutlivariate normal distribution with covariance \code{sigma}, each colmn corresponds to each variable and row to each sample.
+#' @return A matrix of generated samples from a mutlivariate normal distribution with covariance \code{sigma}, each column corresponds to each variable and row to each sample.
 #' @export
 
 multivariate_normal_cholesky<- function( sigma, n_samples){

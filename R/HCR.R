@@ -6,6 +6,8 @@
 #'
 #' @param A Data matrix where columns are variables and rows are samples.
 #' @param A_variances Precomputed variances of columns of \code{A}. If not computed already, set this to \code{colVars(A)}
+:q
+:q
 #' @param clustering_list A named list where names are cluster labels (integers converted to strings) and elemnts are vectors of indexes of nodes (columns of \code{A}) in each cluster, as produced by \code{clustering_vector2list} or outlined in \code{HCCSim_clustering_list}.
 #' @param f Target fraction of variance to explain, a real number in \code{(0,1]}.
 #' @param k Maximum number of PCs to use per cluster in \code{clustering_list}.
@@ -29,7 +31,7 @@
 #' data(brca)
 #' data(brca_clusters)
 #' cl_list<- clustering_vector2list( brca_clusters ) 
-#' blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= colVars(brca), clustering_list= cl_list, f=0.6, k=3)
+#' blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
 #' @export
 
 blockwise_PCA_reconstruction<- function(A,A_variances, clustering_list, f, k){
@@ -67,7 +69,7 @@ blockwise_PCA_reconstruction<- function(A,A_variances, clustering_list, f, k){
 		return(blocks_list)
 								}
 
-#' Place blockwise PCA reconstructions in a input container matrix
+#' Place blockwise PCA reconstructions in an input container matrix
 #'
 #' @param where Input matrix where rows are samples and columns variables. It should have the same dimensions as matrix used as input to \code{blockwise_PCA_reconstruction} function used to produce \code{blockwise_PCA} argument.
 #' @param blockwise_PCA Result of \code{blockwise_PCA_reconstruction} function ot use.
@@ -76,7 +78,7 @@ blockwise_PCA_reconstruction<- function(A,A_variances, clustering_list, f, k){
 #' data(brca)
 #' data(brca_clusters)
 #' cl_list<- clustering_vector2list( brca_clusters ) 
-#' blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= colVars(brca), clustering_list= cl_list, f=0.6, k=3)
+#' blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
 #' brca_rec<- brca
 #' brca_rec[,]=0
 #' brca_rec= allocate_blocks( brca_rec, blocks_brca)
@@ -98,7 +100,7 @@ where
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
-#' calculate_f( zeroOutSmall(clustering_vector, 30), f_E=0.7, X_variances= colVars(brca) )
+#' calculate_f( zeroOutSmall(clustering_vector, 30), f_E=0.7, X_variances= matrixStats::colVars(brca) )
 #' @export
 
 calculate_f<- function( clustering_vector, f_E, X_variances){
@@ -109,7 +111,7 @@ calculate_f<- function( clustering_vector, f_E, X_variances){
 	warning("initial target fraction f_E cannot be reached by using any fraction of noiseless clustering, returning NA")
 	return(NA)
     }
- stopifnot(v_noiseless>0) 
+ stopifnot(v_noiseless>0)
  return( v_target/ v_noiseless)	
 }
 
@@ -131,10 +133,11 @@ calculate_f<- function( clustering_vector, f_E, X_variances){
 #' \item \code{C_base} A \code{clustering_list} representing input clustering.
 #' \item \code{f} Recalculated \code{f_E} giving the fraction of variance of proper clusters to explain (excluding "noise" clusters (\code{C_0}))
 #' \item \code{C_base_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{C_base}. It is output of \code{blockwisa_PCA_reconstruction} funtion.
+#' }
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
-#' result<- initial_clusterNreconstruct(X= brca, X_variances=colVars(brca),
+#' result<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
 #'				        clustering_vector=brca_clusters)
 #' lapply(result$C_base, length)
 #' length(result$C_base_blockPCA)
@@ -405,9 +408,9 @@ for (K in unsaturated_tuples) {
 	      hcluster_blockPCA= hcl_expanded_blockPCA) )
 }
 
-#' Complement the missing variances of reconstructed variance by appropriate amount of independent white noise
+#' Complement the missing variances of reconstructed variables by appropriate amount of independent white noise
 #'
-#' Add \code{E_i} of noise from normal distribution to each reconstructed variable \code{X'_i} such that \code{var(X'_i)==var(X_i)} where \code{X_i} is a reference variable.
+#' Add \code{E_i} of noise from normal distribution to each reconstructed variable \code{Xg_i} such that \code{var(Xg_i)==var(X_i)} where \code{X_i} is a reference variable.
 #'
 #' @param Xg l
 #' @param X l
@@ -433,7 +436,7 @@ return(Xg)
 #' @param hclustering_list l
 #' @param add_noise l
 #' @param uncenter l
-#' @return A matrix \code{Xg} which is the \code{g}-th order hierarchica l clustering reconstruction of correlated variables in \code{X}.
+#' @return A matrix \code{Xg} which is the \code{g}-th order hierarchical clustering reconstruction of correlated variables in \code{X}, where \code{g} is the number of levels in \code{hclustering_list} and \code{hcluster_blockPCA}.
 
 get_full_reconstruction<- function(X,hcluster_blockPCA, hclustering_list, add_noise=TRUE, uncenter=TRUE) {
 
