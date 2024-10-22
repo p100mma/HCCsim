@@ -12,7 +12,7 @@ multivariate_normal_cholesky(sigma, n_samples)
 \item{n_samples}{Number of samples to generate}
 }
 \value{
-A matrix of generated samples from a mutlivariate normal distribution with covariance \code{sigma}, each colmn corresponds to each variable and row to each sample.
+A matrix of generated samples from a mutlivariate normal distribution with covariance \code{sigma}, each column corresponds to each variable and row to each sample.
 }
 \description{
 Generate samples from multivariate normal distribution with a given covariance

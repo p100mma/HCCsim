@@ -50,3 +50,16 @@ A \code{list}
 \description{
 Subdivide clusters in the innermost layer of hierarchical clustering and reconstruct the residuals in the subdivided clusters
 }
+\examples{
+data(brca)
+data(brca_clusters)
+lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+			        clustering_vector=brca_clusters)
+lvl2<- subclusterNreconstruct(X=brca, X_similarity_matrix=cor(brca)^2, 
+				 X_variances= matrixStats::colVars(brca),
+				 hclustering_list= lvl1$C_base,
+                              hcluster_PCA_blocks=lvl1$C_base_blockPCA,
+                              clfun2=similarity_based_hclust,
+                              clfun2OtherArgs_constant=list(method="complete" ),
+			 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+}

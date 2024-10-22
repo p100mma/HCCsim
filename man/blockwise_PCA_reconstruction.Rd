@@ -41,5 +41,5 @@ In a nutshell, function performs PCA separately in each group of columns of \cod
 data(brca)
 data(brca_clusters)
 cl_list<- clustering_vector2list( brca_clusters ) 
-blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= colVars(brca), clustering_list= cl_list, f=0.6, k=3)
+blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
 }

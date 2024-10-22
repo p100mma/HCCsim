@@ -6,8 +6,6 @@
 #'
 #' @param A Data matrix where columns are variables and rows are samples.
 #' @param A_variances Precomputed variances of columns of \code{A}. If not computed already, set this to \code{colVars(A)}
-:q
-:q
 #' @param clustering_list A named list where names are cluster labels (integers converted to strings) and elemnts are vectors of indexes of nodes (columns of \code{A}) in each cluster, as produced by \code{clustering_vector2list} or outlined in \code{HCCSim_clustering_list}.
 #' @param f Target fraction of variance to explain, a real number in \code{(0,1]}.
 #' @param k Maximum number of PCs to use per cluster in \code{clustering_list}.
@@ -186,7 +184,7 @@ initial_clusterNreconstruct<- function(X,
 			    C_base_blockPCA=NA) ) }
 		
         # result if everything went OK	
-     list(C_base=C_base, f=f,
+     list(C_base=clustering_list, f=f,
      C_base_blockPCA=blockwise_PCA_reconstruction(X,
 						  X_variances, 
 						  clustering_list,
@@ -287,6 +285,25 @@ normalized_cl_entropy<- function( clustering_list ) {
  -sum( p_c * log( p_c ) )/(log(n_groups))
 }
 
+#' Normalized version of hierarchical clustering suited for use with HCR
+#'
+#' Clustering functions used with HCR must take as an input similarity matrix and return vector of cluster labels. This function adapts \code{hclust} from base R to this convention.
+#'
+#' @param similarity_matrix A symmetric matrix of node similarities.
+#' @param n_group A number of groups in the output clustering.
+#' @param max_sim Maximum value of similarities in \code{similarity_matrix}.
+#' @param method A method for cluster to cluster distance calculation in \code{hclust}.
+#' @return An integer vector of cluster labels of nodes.
+#' @export 
+
+similarity_based_hclust<- function( similarity_matrix, n_group, max_sim=1, method="complete") {
+hclust( as.dist( max_sim - similarity_matrix), method=method)-> hcl_object
+clvec<-cutree(hcl_object, k=n_group)
+attr(clvec, 'params')=list(n_group=n_group)
+attr(clvec, 'domain_size')= ncol(similarity_matrix)
+clvec
+}
+
 #' Subdivide clusters in the innermost layer of hierarchical clustering and reconstruct the residuals in the subdivided clusters
 #' 
 #' @param X  l
@@ -302,8 +319,19 @@ normalized_cl_entropy<- function( clustering_list ) {
 #' @param S_power l
 #' @param corfun l
 #' @return A \code{list}
+#' @examples
+#' data(brca)
+#' data(brca_clusters)
+#' lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+#'				        clustering_vector=brca_clusters)
+#' lvl2<- subclusterNreconstruct(X=brca, X_similarity_matrix=cor(brca)^2, 
+#' 				 X_variances= matrixStats::colVars(brca),
+#' 				 hclustering_list= lvl1$C_base,
+#'                               hcluster_PCA_blocks=lvl1$C_base_blockPCA,
+#'                               clfun2=similarity_based_hclust,
+#'                               clfun2OtherArgs_constant=list(method="complete" ),
+#'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
 #' @export
-
 
 subclusterNreconstruct<- function(X, X_similarity_matrix, 
 				X_variances, hclustering_list, hcluster_PCA_blocks, k=5, f=0.6,
@@ -370,7 +398,7 @@ for (K in unsaturated_tuples) {
 		# variance left2explain > 0 and C_K big enough so 
 		# calculate similarity graph
 		# of residuals & split
-		S_Eg.C_k<-  abs (corfun( Eg [, C_K ])	)^S_power
+		S_Eg.C_K<-  abs (corfun( Eg [, C_K ])	)^S_power
 		# choose best clustering among those produced by 
 		# different values of clfun2OtherArgs_ranges
 		clf2Args<- c(list( S_Eg.C_K), clfun2OtherArgs_constant )
@@ -427,6 +455,9 @@ for (j in 1:length(Eg_variances) )
 return(Xg)
 }
 
+
+
+
 #' Perform the full reconstruction from HCD of a dataset
 #'
 #' Given a HCD (hierarchical clustering decomposion of correlation structure) of a dataset, generate it's reconstruction (HCR) based on that HCD.
@@ -437,10 +468,11 @@ return(Xg)
 #' @param add_noise l
 #' @param uncenter l
 #' @return A matrix \code{Xg} which is the \code{g}-th order hierarchical clustering reconstruction of correlated variables in \code{X}, where \code{g} is the number of levels in \code{hclustering_list} and \code{hcluster_blockPCA}.
+#' @export
 
 get_full_reconstruction<- function(X,hcluster_blockPCA, hclustering_list, add_noise=TRUE, uncenter=TRUE) {
 
-g<-get_max_g(hclustering_list)
+g<-get_max_lvl(hclustering_list)
 Xg<- X
 Xg[,]=0  #placeholder for the reconstruction of gth order
 

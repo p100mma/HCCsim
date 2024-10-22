@@ -2,7 +2,7 @@
 % Please edit documentation in R/HCR.R
 \name{allocate_blocks}
 \alias{allocate_blocks}
-\title{Place blockwise PCA reconstructions in a input container matrix}
+\title{Place blockwise PCA reconstructions in an input container matrix}
 \usage{
 allocate_blocks(where, blockwise_PCA)
 }
@@ -15,13 +15,13 @@ allocate_blocks(where, blockwise_PCA)
 An updated matrix \code{where} with columns corresponding to each cluster were replaced by their recondstructions from \code{blockwise_PCA} objects.
 }
 \description{
-Place blockwise PCA reconstructions in a input container matrix
+Place blockwise PCA reconstructions in an input container matrix
 }
 \examples{
 data(brca)
 data(brca_clusters)
 cl_list<- clustering_vector2list( brca_clusters ) 
-blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= colVars(brca), clustering_list= cl_list, f=0.6, k=3)
+blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
 brca_rec<- brca
 brca_rec[,]=0
 brca_rec= allocate_blocks( brca_rec, blocks_brca)

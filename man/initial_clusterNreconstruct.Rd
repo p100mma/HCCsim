@@ -43,7 +43,7 @@ Divide variables dataset based on input clustering and reconstruct clusters usin
 \examples{
 data(brca)
 data(brca_clusters)
-result<- initial_clusterNreconstruct(X= brca, X_variances=colVars(brca),
+result<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
 			        clustering_vector=brca_clusters)
 lapply(result$C_base, length)
 length(result$C_base_blockPCA)

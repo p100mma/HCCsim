@@ -22,5 +22,5 @@ Recalculate fraction of variance to explain taking the clusterless variables int
 \examples{
 data(brca)
 data(brca_clusters)
-calculate_f( zeroOutSmall(clustering_vector, 30), f_E=0.7, X_variances= colVars(brca) )
+calculate_f( zeroOutSmall(clustering_vector, 30), f_E=0.7, X_variances= matrixStats::colVars(brca) )
 }

@@ -173,7 +173,7 @@ clustering_vector2list<- function(clustering_vector){
 labels<- sort( unique(clustering_vector[clustering_vector!=0]))
 init_list<-list()
 for (i in labels)
-	init_list[[i]]<- which(clustering_vector==i)
+	init_list[[as.character(i)]]<- which(clustering_vector==i)
 HCCSim_clustering_list(init_list, domain_size= length(clustering_vector), params= attr(clustering_vector, 'params') )
 }
 
