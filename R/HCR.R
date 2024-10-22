@@ -119,31 +119,31 @@ calculate_f<- function( clustering_vector, f_E, X_variances){
 
 #' Divide variables dataset based on input clustering and reconstruct clusters using at most k principal components
 #' 
-#' @param X l 
-#' @param X_variances  l
-#' @param clustering_vector l
-#' @param clustering_list l
-#' @param min_cl_size l
-#' @param f_E l
-#' @param k l
+#' @param X A matrix containing dataset where columns are variables and rows are samples.
+#' @param X_variances Precomputed variances of \code{X}.
+#' @param clustering_vector A vector encoding cluster membership according to convention outlined in \code{HCCsim_clustering_vector} class. Either this or \code{clustering_list} argument shall be non null.
+#' @param clustering_list  A list encoding cluster membership according to convention outlined in \code{HCCsim_clustering_list} class. Either this or \code{clustering_list} argument shall be non null.
+#' @param min_cl_size If given, nodes in clusters of size less than \code{min_cl_size} get classified as clusterless nodes.
+#' @param f_E A target fraction of variance to explain. Gets recalculated to match the corresponding fraction of total variance of proper clusters (without clusterless variables).
+#' @param k Maximum number of principal components to use for reconstructing each cluster.
 #' @return A \code{list} with following elements:
 #' \itemize{
-#' \item \code{C_base} A \code{clustering_list} representing input clustering.
+#' \item \code{clustering_list} A \code{clustering_list} representing input clustering.
 #' \item \code{f} Recalculated \code{f_E} giving the fraction of variance of proper clusters to explain (excluding "noise" clusters (\code{C_0}))
-#' \item \code{C_base_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{C_base}. It is output of \code{blockwisa_PCA_reconstruction} funtion.
+#' \item \code{cluster_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{clustering_list} component. It is output of \code{blockwise_PCA_reconstruction} funtion.
 #' }
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
 #' result<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
 #'				        clustering_vector=brca_clusters)
-#' lapply(result$C_base, length)
-#' length(result$C_base_blockPCA)
+#' lapply(result$clustering_list, length)
+#' length(result$cluster_blockPCA)
 #' @export
 
 initial_clusterNreconstruct<- function(X, 
 				       X_variances,
-				       clustering_vector,
+				       clustering_vector=NULL,
 				       clustering_list=NULL,
 				       min_cl_size=min(30,ncol(X)),
 				       f_E=0.6,
@@ -179,13 +179,13 @@ initial_clusterNreconstruct<- function(X,
 
 	# if calculation of 'f' failed:	
 	if (is.na(f)) {warning(" stopped because provided clustering leaves too much variance in the noise part");
-	       return( list(C_base=clustering_list,
+	       return( list(clustering_list=clustering_list,
 			    f=f,
-			    C_base_blockPCA=NA) ) }
+			    cluster_blockPCA=NA) ) }
 		
         # result if everything went OK	
-     list(C_base=clustering_list, f=f,
-     C_base_blockPCA=blockwise_PCA_reconstruction(X,
+     list(clustering_list=clustering_list, f=f,
+     cluster_blockPCA=blockwise_PCA_reconstruction(X,
 						  X_variances, 
 						  clustering_list,
 						  f=f, k=k)
@@ -208,11 +208,22 @@ initial_clusterNreconstruct<- function(X,
 
 #' Add subclusters to list describing hierarchical clustering with correct indexing according to tuple convention
 #'
-#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster.
+#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster. Can be an object of class \code{HCCsim_clustering_list}.
 #' @param cluster_tuple A vector of indexes describing the indexing tuple or a string (c(1,2) or '1,2')
 #' @param subdivision A grouping of indexes inside cluster indexed by \code{cluster_tuple} into subgroups in form of \code{clustering_list}.
-#' @return An updated \code{hclustering_list} with additional elements denoting subclusters of cluster indexed by \code{cluster_tuple}, indexed by the tuple convention ( e.g. if \code{cluster_tuple='1,2'} then added subclusters from subdivision with clusters '1','2','3' are '1,2,1', '1,2,2', '1,2,3').
+#' @return An updated \code{hclustering_list} with additional elements denoting subclusters of cluster indexed by \code{cluster_tuple}, indexed by the tuple convention ( e.g. if \code{cluster_tuple='1,2'} then added subclusters from subdivision with clusters '1','2','3' are '1,2,1', '1,2,2', '1,2,3'). Integer suffixes are inferred from the order of the clusters in \code{subdivision}.
+#' @examples
+#' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+#' 				    domain_size= 15,   #4 clusterless nodes implied
+#' 				    params=list(base_param=1) )
+#' subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+#' subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+#' subdivide_cluster( base_cl, "1", subdivision1)-> hcl
+#' print(hcl)
+#' subdivide_cluster( hcl, "3", subdivision2)-> hcl
+#' print(hcl)
 #' @export
+
 
 
 subdivide_cluster<- function( hclustering_list,
@@ -241,8 +252,17 @@ p.<-function(str_tuple) unlist(strsplit(str_tuple, split=','))
 
 #' Extract number of levels of hierarchy from \code{hclustering_list}
 
-#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster.
+#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster. Designed to work with output of \code{subdivide_cluster} function or instance of \code{HCCsim_clustering_list} class.
 #' @return An integer giving the number of levels of hierarchy in \code{hclustering_list}
+#' @examples
+#' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+#' 				    domain_size= 15,   #4 clusterless nodes implied
+#' 				    params=list(base_param=1) )
+#' subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+#' subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+#' subdivide_cluster( base_cl, '1', subdivision1)-> hcl
+#' subdivide_cluster( hcl, '3', subdivision2)-> hcl
+#' get_max_lvl(hcl)
 #' @export
 
 get_max_lvl<- function(hclustering_list){
@@ -254,9 +274,19 @@ names(hclustering_list)-> all_tuples
 
 #' Extract \code{clustering_list} describing division into the clusters at specified lvl of hierarchy of \code{hclustering_list}
 #' 
-#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers denoting nodes belonging to that cluster.
-#' @param g An integer specifying lvl of hierarchy (number of subdivision step) to extract from \code{hclustering_list}
+#' @param hclustering_list A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers denoting nodes belonging to that cluster. Designed to work for output of \code{subdivide_cluster} function or an instance of \code{HCCsim_clustering_list} class.
+#' @param g An integer specifying lvl of hierarchy (number of subdivision step) to extract from \code{hclustering_list} from which clusters to extract.
 #' @return A \code{clustering_list} describing division into the clusters at lvl \code{g} of hierarchy of \code{hclustering_list} 
+#' @examples
+#' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+#' 				    domain_size= 15,   #4 clusterless nodes implied
+#' 				    params=list(base_param=1) )
+#' subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+#' subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+#' subdivide_cluster( base_cl, '1', subdivision1)-> hcl
+#' subdivide_cluster( hcl, '3', subdivision2)-> hcl
+#' get_partition_at_g(hcl,1)
+#' get_partition_at_g(hcl,2)
 #' @export
 
 get_partition_at_g<- function( hclustering_list,
@@ -276,6 +306,10 @@ names(hclustering_list)-> all_tuples
 #' 
 #' @param clustering_list A list where elements are atomic vectors describing separate clusters.  Number of elements in each vector is the number of objects inside that cluster.
 #' @return A real number giving the entropy of proportions of groups in the input.
+#' @examples
+#' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+#' 				    params=list(base_param=1) )
+#' normalized_cl_entropy(base_cl)
 #' @export
 
 normalized_cl_entropy<- function( clustering_list ) {
@@ -294,6 +328,9 @@ normalized_cl_entropy<- function( clustering_list ) {
 #' @param max_sim Maximum value of similarities in \code{similarity_matrix}.
 #' @param method A method for cluster to cluster distance calculation in \code{hclust}.
 #' @return An integer vector of cluster labels of nodes.
+#' @examples
+#' data(brca)
+#' table(similarity_based_hclust( cor(brca)^2, 7))
 #' @export 
 
 similarity_based_hclust<- function( similarity_matrix, n_group, max_sim=1, method="complete") {
@@ -307,7 +344,6 @@ clvec
 #' Subdivide clusters in the innermost layer of hierarchical clustering and reconstruct the residuals in the subdivided clusters
 #' 
 #' @param X  l
-#' @param X_similarity_matrix  l
 #' @param X_variances  l
 #' @param hclustering_list  l
 #' @param hcluster_PCA_blocks l
@@ -324,16 +360,16 @@ clvec
 #' data(brca_clusters)
 #' lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
 #'				        clustering_vector=brca_clusters)
-#' lvl2<- subclusterNreconstruct(X=brca, X_similarity_matrix=cor(brca)^2, 
+#' lvl2<- subclusterNreconstruct(X=brca,
 #' 				 X_variances= matrixStats::colVars(brca),
-#' 				 hclustering_list= lvl1$C_base,
-#'                               hcluster_PCA_blocks=lvl1$C_base_blockPCA,
+#' 				 hclustering_list= lvl1$clustering_list,
+#'                               hcluster_PCA_blocks=lvl1$cluster_blockPCA,
 #'                               clfun2=similarity_based_hclust,
 #'                               clfun2OtherArgs_constant=list(method="complete" ),
 #'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
 #' @export
 
-subclusterNreconstruct<- function(X, X_similarity_matrix, 
+subclusterNreconstruct<- function(X,
 				X_variances, hclustering_list, hcluster_PCA_blocks, k=5, f=0.6,
 				clfun2,
 				 clfun2OtherArgs_constant=NULL,

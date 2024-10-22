@@ -13,18 +13,11 @@ clustering_list2vector(clustering_list)
 An integer vector for which \code{clustering_vector[i]} gives a label of the group to which node \code{i} belongs. An object of class \code{HCCSim_clustering_vector} with attribute \code{params} copied from the input \code{clustering_list}.
 }
 \description{
-\code{clustering_list} is a list of named elements. Each element represents one proper cluster of nodes and contains integers denoting nodes belonging to that cluster.
-Name of the element is the cluster label (integer converted to string, e.g. for two proper clusters, there are two elements '1' and '2').
-Note that info on clusterless, "noise" nodes is deduced by taking into the account which integers are not contained inside proper clusters.
-This requires using attribute \code{'domain_size'} to store the total number of nodes in the network which was clustered.
-It posesses additional attribute \code{'params'} which stores optional additional parameters of the clustering algorithm used.
-\code{clustering_vector} is an integer vector for which \code{clustering_vector[i]} gives a label of the group to which node \code{i} belongs.
-It posesses additional attribute \code{'params'} which stores optional additional parameters of the clustering algorithm used.
-Labels of proper clusters start from 1. Zero label denotes the "noise" subset of nodes not belonging to any proper cluster.
+Transform a representation of clusters in terms of a list of indexes to the vector of numeric labels. See fifunctions \code{HCCSim_clustering_vector} and \code{HCCSim_clustering_list}.
 }
 \examples{
 data(brca_clusters)
-cl_vec<-HCCSim_clustering_vector(brca_clusters, params= =list(algorithm='mcl', inflation=2)) 
+cl_vec<-HCCSim_clustering_vector(brca_clusters, params =list(algorithm='mcl', inflation=2)) 
 table(cl_vec)
 clustering_vector2list( cl_vec )-> cl_list
 lapply(cl_list, length)

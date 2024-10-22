@@ -22,6 +22,8 @@ similarity_based_hclust(
 }
 \value{
 An integer vector of cluster labels of nodes.
+data(brca)
+table(similarity_based_hclust( cor(brca)^2, 7))
 }
 \description{
 Clustering functions used with HCR must take as an input similarity matrix and return vector of cluster labels. This function adapts \code{hclust} from base R to this convention.

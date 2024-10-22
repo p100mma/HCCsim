@@ -11,7 +11,7 @@ HCCSim_clustering_list(
 )
 }
 \arguments{
-\item{x}{A list of clusters. Each element is a vector of indexes of nodes that belong to each cluster. Names denote cluster labels. Can exclude some nodes of originally clustered network, which makes them clusterless.}
+\item{x}{A list of clusters. Each element is a vector of indexes of nodes that belong to each cluster. Names denote cluster labels. Whatever the names are in the list, they get converted to strings of consecutive integers starting from 1. List can exclude some nodes of originally clustered network, which makes them clusterless.}
 
 \item{domain_size}{Total number of nodes in the network of which node indexes have been placed in each cluster.}
 

@@ -7,13 +7,24 @@
 get_partition_at_g(hclustering_list, g)
 }
 \arguments{
-\item{hclustering_list}{A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers denoting nodes belonging to that cluster.}
+\item{hclustering_list}{A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers denoting nodes belonging to that cluster. Designed to work for output of \code{subdivide_cluster} function or an instance of \code{HCCsim_clustering_list} class.}
 
-\item{g}{An integer specifying lvl of hierarchy (number of subdivision step) to extract from \code{hclustering_list}}
+\item{g}{An integer specifying lvl of hierarchy (number of subdivision step) to extract from \code{hclustering_list} from which clusters to extract.}
 }
 \value{
 A \code{clustering_list} describing division into the clusters at lvl \code{g} of hierarchy of \code{hclustering_list}
 }
 \description{
 Extract \code{clustering_list} describing division into the clusters at specified lvl of hierarchy of \code{hclustering_list}
+}
+\examples{
+base_cl<- HCCsim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+				    domain_size= 15,   #4 clusterless nodes implied
+				    params=list(base_param=1) )
+subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+subdivide_cluster( base_cl, '1', subdivision1)-> hcl
+subdivide_cluster( hcl, '3', subdivision2)-> hcl
+get_partition_at_g(hcl,1)
+get_partition_at_g(hcl,2)
 }

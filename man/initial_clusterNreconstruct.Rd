@@ -7,7 +7,7 @@
 initial_clusterNreconstruct(
   X,
   X_variances,
-  clustering_vector,
+  clustering_vector = NULL,
   clustering_list = NULL,
   min_cl_size = min(30, ncol(X)),
   f_E = 0.6,
@@ -15,26 +15,26 @@ initial_clusterNreconstruct(
 )
 }
 \arguments{
-\item{X}{l}
+\item{X}{A matrix containing dataset where columns are variables and rows are samples.}
 
-\item{X_variances}{l}
+\item{X_variances}{Precomputed variances of \code{X}.}
 
-\item{clustering_vector}{l}
+\item{clustering_vector}{A vector encoding cluster membership according to convention outlined in \code{HCCsim_clustering_vector} class. Either this or \code{clustering_list} argument shall be non null.}
 
-\item{clustering_list}{l}
+\item{clustering_list}{A list encoding cluster membership according to convention outlined in \code{HCCsim_clustering_list} class. Either this or \code{clustering_list} argument shall be non null.}
 
-\item{min_cl_size}{l}
+\item{min_cl_size}{If given, nodes in clusters of size less than \code{min_cl_size} get classified as clusterless nodes.}
 
-\item{f_E}{l}
+\item{f_E}{A target fraction of variance to explain. Gets recalculated to match the corresponding fraction of total variance of proper clusters (without clusterless variables).}
 
-\item{k}{l}
+\item{k}{Maximum number of principal components to use for reconstructing each cluster.}
 }
 \value{
 A \code{list} with following elements:
 \itemize{
-\item \code{C_base} A \code{clustering_list} representing input clustering.
+\item \code{clustering_list} A \code{clustering_list} representing input clustering.
 \item \code{f} Recalculated \code{f_E} giving the fraction of variance of proper clusters to explain (excluding "noise" clusters (\code{C_0}))
-\item \code{C_base_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{C_base}. It is output of \code{blockwisa_PCA_reconstruction} funtion.
+\item \code{cluster_blockPCA} A \code{k}-th order clustering based reconstruction of \code{X}, based on \code{clustering_list} component. It is output of \code{blockwise_PCA_reconstruction} funtion.
 }
 }
 \description{
@@ -45,6 +45,6 @@ data(brca)
 data(brca_clusters)
 result<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
 			        clustering_vector=brca_clusters)
-lapply(result$C_base, length)
-length(result$C_base_blockPCA)
+lapply(result$clustering_list, length)
+length(result$cluster_blockPCA)
 }

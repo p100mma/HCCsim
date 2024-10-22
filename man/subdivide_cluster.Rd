@@ -7,15 +7,26 @@
 subdivide_cluster(hclustering_list, cluster_tuple, subdivision)
 }
 \arguments{
-\item{hclustering_list}{A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster.}
+\item{hclustering_list}{A list of clusters and sub-clusters indexed by strings of integer tuples (like '1','2','1,1','1,2','2,1','2,2' etc.). Each cluster is a vector of integers dentoing nodes belonging to that cluster. Can be an object of class \code{HCCsim_clustering_list}.}
 
 \item{cluster_tuple}{A vector of indexes describing the indexing tuple or a string (c(1,2) or '1,2')}
 
 \item{subdivision}{A grouping of indexes inside cluster indexed by \code{cluster_tuple} into subgroups in form of \code{clustering_list}.}
 }
 \value{
-An updated \code{hclustering_list} with additional elements denoting subclusters of cluster indexed by \code{cluster_tuple}, indexed by the tuple convention ( e.g. if \code{cluster_tuple='1,2'} then added subclusters from subdivision with clusters '1','2','3' are '1,2,1', '1,2,2', '1,2,3').
+An updated \code{hclustering_list} with additional elements denoting subclusters of cluster indexed by \code{cluster_tuple}, indexed by the tuple convention ( e.g. if \code{cluster_tuple='1,2'} then added subclusters from subdivision with clusters '1','2','3' are '1,2,1', '1,2,2', '1,2,3'). Integer suffixes are inferred from the order of the clusters in \code{subdivision}.
 }
 \description{
 Add subclusters to list describing hierarchical clustering with correct indexing according to tuple convention
+}
+\examples{
+base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+				    domain_size= 15,   #4 clusterless nodes implied
+				    params=list(base_param=1) )
+subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+subdivide_cluster( base_cl, "1", subdivision1)-> hcl
+print(hcl)
+subdivide_cluster( hcl, "3", subdivision2)-> hcl
+print(hcl)
 }
