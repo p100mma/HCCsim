@@ -13,16 +13,16 @@
 #' \itemize{
 #' \item \code{location} A vector of indexes of reconstructed columns in the block as placed in \code{A}.
 #' \item \code{total_var} Real number, total variance of the block.
-#' \item \code{pc_var}
-#' \item \code{cumul_var}
-#' \item \code{k_used}
-#' \item \code{k_f}
-#' \item \code{f}
-#' \item \code{saturated}
-#' \item \code{var_explained}
-#' \item \code{PC}
-#' \item \code{Vt}
-#' \item \code{reconstruction}
+#' \item \code{pc_var} Variances of all PCs of each block.
+#' \item \code{cumul_var} Vector of cumulative variances of all PCs.
+#' \item \code{k_used} Number of PCs used (can be less than \code{k} )
+#' \item \code{k_f} Number of PCs one would have to use to explain target fraction \code{f} of total variance.
+#' \item \code{f} Same as input argument.
+#' \item \code{saturated} True if total variance was fully explained with \code{k_used} PCs.
+#' \item \code{var_explained} How much variance in total was explained.
+#' \item \code{PC} Matrix of PCs used for reoconstruction, has \code{k2use} columns, one per each PC.
+#' \item \code{Vt} Coefficients of PCs used for reconstruction.
+#' \item \code{reconstruction} Reconstructed data using \code{PC} and \code{Vt}.
 #' 	   }
 #' @importFrom matrixStats colVars
 #' @examples
@@ -343,18 +343,22 @@ clvec
 
 #' Subdivide clusters in the innermost layer of hierarchical clustering and reconstruct the residuals in the subdivided clusters
 #' 
-#' @param X  l
-#' @param X_variances  l
-#' @param hclustering_list  l
-#' @param hcluster_PCA_blocks l
-#' @param k  l
-#' @param f l
-#' @param clfun2 l
-#' @param clfun2OtherArgs_constant l
-#' @param clfun2OtherArgs_ranges l
-#' @param S_power l
-#' @param corfun l
-#' @return A \code{list}
+#' @param X A matrix containing dataset where columns are variables and rows are samples.
+#' @param X_variances Precomputed variances of \code{X}.
+#' @param hclustering_list  A list encoding cluster membership, such as one produced by this function or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}. Clusters at the lowest level will be subdivided and reconstructed.
+#' @param hcluster_PCA_blocks Corresponding reconstructions of blocks defined by clusters from \code{hclustering_list}. Produced by this function or by \code{initial_clusterNreconstruct} or \code{blockwise_PCA_reconstruction}.
+#' @param k Maximum number of principal components to use for reconstructing each cluster.
+#' @param f Target fraction of variance to explain (of the proper clusters).
+#' @param clfun2 Clustering function to group residuals of each innermost cluster of \code{hclustering_list} based on magnitude of their correlations. Must receive similarity matrix as a first argument. Best clustering from several different settings will be picked by maximizing \code{normalized_cl_entropy()} value.
+#' @param clfun2OtherArgs_constant List of named arguments of \code{clfun2} apart from similarity matrix, which shall be kept constant across different candidate settings to test.
+#' @param clfun2OtherArgs_ranges A list of named vectors of parameters to test. Each named vector in the list shall have the same length. Names of the vectors should correspond to values of named arguments of \code{clfun2}. At step \code{i}, settings of \code{clfun2} are tested defined by \code{i}-th entry of each named vector in that list. Finally, for each cluster, setting maximizing value of \code{normalized_cl_entropy()} function will be chosen as definitive subdivision to use.
+#' @param S_power A value of exponent which to use for transforming correlation of residuals to similarity by \code{abs(cor_matrix)^S_power}.
+#' @param corfun A function to compute correlation of residuals of each cluster. Must accept matrix as its only argument (where columns are variables and rows are samples.
+#' @return A \code{list} with following elements:
+#' \itemize{
+#' \item \code{hclustering_list} An expanded list representing resulting hierarchical clustering, it contains additional clusters that resulted from subdivision.
+#' \item \code{hcluster_blockPCA} A \code{k}-th order clustering based reconstruction of residuals of reconstructions of previous level (determined by input \code{hcluster_blockPCA}. It is expanded by including reconstructions of subclusters added to expanded \code{hclustering_list}.
+#'  }
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
@@ -479,6 +483,17 @@ for (K in unsaturated_tuples) {
 #' @param Xg l
 #' @param X l
 #' @return An updated matrix \code{Xg} with random noise added to each of the columns.
+#' @examples
+#' data(brca)
+#' data(brca_clusters)
+#' lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+#'				        clustering_vector=brca_clusters)
+#' rec<- brca
+#' rec[,]=0
+#' rec= allocate_blocks( rec, lvl1$cluster_blockPCA)
+#' max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #missing variances
+#' rec=add_noise(rec, brca)
+#' max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #after complementing with random noise
 #' @export
 
 add_noise<- function( Xg, X) {
@@ -498,12 +513,25 @@ return(Xg)
 #'
 #' Given a HCD (hierarchical clustering decomposion of correlation structure) of a dataset, generate it's reconstruction (HCR) based on that HCD.
 #'
-#' @param X l
-#' @param hcluster_blockPCA l
-#' @param hclustering_list l
-#' @param add_noise l
-#' @param uncenter l
+#' @param X A matrix containing dataset where columns are variables and rows are samples.
+#' @param hcluster_blockPCA Reconstructions of blocks defined by clusters from \code{hclustering_list}. Produced by \code{sublusterNreconstruct} or by \code{initial_clusterNreconstruct} or \code{blockwise_PCA_reconstruction}.
+#' @param hclustering_list  A list encoding cluster membership, such as one produced by \code{subclusterNreconstruct} or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}.
+#' @param add_noise If \code{TRUE}, missing variance of reconstructed variables will be complemented by an adequate amount of random noise.
+#' @param uncenter If \code{TRUE}, the means of variables in \code{X} will be added to corresponding variables in reconstruction.
 #' @return A matrix \code{Xg} which is the \code{g}-th order hierarchical clustering reconstruction of correlated variables in \code{X}, where \code{g} is the number of levels in \code{hclustering_list} and \code{hcluster_blockPCA}.
+#' @examples
+#' data(brca)
+#' data(brca_clusters)
+#' lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+#'				        clustering_vector=brca_clusters)
+#' lvl2<- subclusterNreconstruct(X=brca,
+#' 				 X_variances= matrixStats::colVars(brca),
+#' 				 hclustering_list= lvl1$clustering_list,
+#'                               hcluster_PCA_blocks=lvl1$cluster_blockPCA,
+#'                               clfun2=similarity_based_hclust,
+#'                               clfun2OtherArgs_constant=list(method="complete" ),
+#'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+#' X_2<- get_full_reconstruction(brca, lvl2$hcluster_blockPCA, lvl2$hclustering_list)
 #' @export
 
 get_full_reconstruction<- function(X,hcluster_blockPCA, hclustering_list, add_noise=TRUE, uncenter=TRUE) {
