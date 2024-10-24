@@ -1,16 +1,18 @@
 Package: HCCsim
-Title: Hierarchical Clustering based Correlation Structure Simulation
-Version: 0.0.0.9000
+Title: Hierarchical Clustering based Correlation Structure Simulatior
+Version: 0.0.0.9001
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Piotr", "Stomma", , "p.stomma@uwb.edu.pl", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2603-8205"))
+Description: Simulator of highly correlated dimensional data by simplified hierarchical model. Directions in the dataset are repeatedly decomposed into clusters by graph based algorithm based on their correlations and each cluster is reconstructed using PCA. Remaining part of the signal is further decomposed in each cluster separatedly. Simulator then replicates correlations and distributions of PCs of each cluster to model the data with reduced number of parameters. Related paper (cite this when using this package):
+Piotr Stomma, Witold R Rudnicki, HCS—hierarchical algorithm for simulation of omics datasets, 
+Bioinformatics, Volume 40, Issue Supplement_2, September 2024, Pages ii98–ii104, 
+https://doi.org/10.1093/bioinformatics/btae392
 Imports:
 	matrixStats,
 	Hmisc,
 	rmetalog
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -55,7 +55,8 @@ t( L %*% t(Z) )
 #' Get set generator PCs correlated like reference ones
 #'
 #' @param reference_PC_gen_matrix A matrix of PCs of clusters and subclusters which correlations are to be replicated, such as one prouced by \code{PC_generator_matrix}
-#' @return A matrix of the same dimensions as input one, containing synthetic PCs from normal distribution with identical covariance as reference ones but independent of original ones.
+#' @param n_samples Number of samples to generate, defaults to the number of rows of \code{reference_PC_gen_matrix}.
+#' @return A matrix of with same number of columns as input one, containing synthetic PCs from normal distribution with identical covariance as reference ones but independent of original ones, with number of rows specified by \code{n_samples}.
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
@@ -75,9 +76,9 @@ t( L %*% t(Z) )
 #' @export
 
 
-cloned_normalPC_matrix<- function(reference_PC_gen_matrix) {
+cloned_normalPC_matrix<- function(reference_PC_gen_matrix, n_samples= nrow(reference_PC_gen_matrix)) {
 	PCsig<- cov(reference_PC_gen_matrix)
-	PCnorm<-multivariate_normal_cholesky(sigma=PCsig, n_samples=nrow(reference_PC_gen_matrix) ) 
+	PCnorm<-multivariate_normal_cholesky(sigma=PCsig, n_samples=n_samples ) 
 	colnames(PCnorm)<- colnames(reference_PC_gen_matrix)
 	PCnorm
 }
@@ -101,7 +102,7 @@ qnorm(  pmetalog( m=target_metalog, q=ref_PC, term=term)  , 0,1)
 #' @param reference_PC_gen_matrix Matrix where columns are PCs of clusters which will be transformed to normal distributions. 
 #' @param target_metalogs A list of objects of class \code{metalog} of length equal to number of columns of \code{reference_PC_gen_matrix}.
 #' @param target_terms A vector of numbers of terms to use in applying each metalog transformation of the same length as \code{target_metalogs}.
-#' @return A matrix of the same dimensions as \code{reference_PC_gen_matrix}, containing transformed variables from input matrix.
+#' @return A matrix of the same dimensions as \code{reference_PC_gen_matrix}, containing transformed variables from input matrix, with same column names.
 #' @examples
 #' data(brca)
 #' data(brca_clusters)
@@ -144,9 +145,10 @@ qmetalog( target_metalog_distr, y= u, term=term)
 #' each such variable gets transformed to metalog distribution given by \code{target_metalogs[[i]]} 
 #' (a \code{metalog} object).
 #'
-#' @param PC_hidden_normal A matrix of which covariance is computed and replicated in output data.
+#' @param PC_hidden_normal A matrix of which covariance is computed and replicated in output data. Column names of that matrix get copied to the output one.
 #' @param target_metalogs A list of \code{metalog} objects specifying target marginal distributions for generated variables. Must be of length equal to number of columns of \code{PC_hidden_normal}.
 #' @param target_terms A vector of numbers of terms to use in applying each metalog transformation of the same length as \code{target_metalogs}.
+#' @param n_samples Number of samples to generate, defaults to the number of rows of \code{reference_PC_gen_matrix}.
 #' @return A matrix of same dimension as \code{PC_hidden_normal} containing cloned version of input matrix which columns are uncorrelated with the input and are transformed to target metalog distributions.
 #' @examples
 #' data(brca)
@@ -163,12 +165,13 @@ qmetalog( target_metalog_distr, y= u, term=term)
 #' @export
 
 
-cloned_metalogPC_matrix<- function( PChidden_normal, target_metalogs, target_terms){
+cloned_metalogPC_matrix<- function( PChidden_normal, target_metalogs, target_terms, 
+				    n_samples=nrow(PChidden_normal)){
 
 stopifnot( ncol(PChidden_normal) == length(target_metalogs) )
 stopifnot( length(target_metalogs) == length(target_terms) )
 H_cov= cov(PChidden_normal)
-H_clones<-multivariate_normal_cholesky(sigma=H_cov, n_samples=nrow(PChidden_normal) ) 
+H_clones<-multivariate_normal_cholesky(sigma=H_cov, n_samples=n_samples ) 
 H_clones<- scale(H_clones, center=TRUE, scale=TRUE)
 	colnames(H_clones)<- colnames(PChidden_normal)
 PCmeta<- H_clones
@@ -196,19 +199,67 @@ return(Xg)
 #' \code{cloned_PCmatrix} should contain as columns simulations of PCs of each cluster and subcluster,
 #' independent from original data (can be produced by \code{cloned_normalPC_matrix} or \code{cloned_metalogPC_matrix}). 
 #'
-#' @param X An input dataset where rows are samples and columns variables
-#' @param hcluster_blockPCA  
+#' @param X An input dataset matrix where rows are samples and columns variables
+#' @param hcluster_blockPCA Reconstructions of blocks defined by clusters from \code{hclustering_list}. Produced by \code{sublusterNreconstruct} or by \code{initial_clusterNreconstruct} or \code{blockwise_PCA_reconstruction}.
+#' @param hclustering_list  A list encoding cluster membership, such as one produced by \code{subclusterNreconstruct} or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}.
+#' @param cloned_PCmatrix Matrix of PCs simulating PCs in \code{hcluster_blockPCA}. Number of rows of that matrix determines number of samples to generate in output dataset. Can be generated by \code{cloned_normalPC_matrix} or \code{cloned_metalogPC_matrix} functions.
+#' @param noise_variances A vector of variances of random noise to add to each synthetic variable. Has to be of length equal to number of columns of \code{X}. Such addition of random noise is performed if this argument is not NULL. Without adding random noise, generated data has lower variance and amplified correlations. 
+#' @param uncenter If \code{TRUE}, then means of \code{X} will be added back to synthetic data. Otherwise, generated data is zero centered.
+#' @return A matrix of dimension \code{nrow(cloned_PCmatrix)} x \code{ncol(X)}, containing synthetic data, generated by using PCs from \code{cloned_PCmatrix} and original coefficients of linear combinations of PCs from \code{hcluster_blockPCA}.
+#' @examples
+#' data(brca)
+#' data(brca_clusters)
+#' lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+#'				        clustering_vector=brca_clusters)
+#' lvl2<- subclusterNreconstruct(X=brca,
+#' 				 X_variances= matrixStats::colVars(brca),
+#' 				 hclustering_list= lvl1$clustering_list,
+#'                               hcluster_PCA_blocks=lvl1$cluster_blockPCA,
+#'                               clfun2=similarity_based_hclust,
+#'                               clfun2OtherArgs_constant=list(method="complete" ),
+#'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+#'
+#' ## 2 level HCS(n): normal distribution of PCs
+#' PC_generator_matrix( lvl2$hcluster_blockPCA) -> PCmat2
+#' cloned_PC_N<- cloned_normalPC_matrix(PCmat2)
+#' #compute missing variance of 2lvl rec.
+#' X_r2<- get_full_reconstruction(brca, lvl2$hcluster_blockPCA, lvl2$hclustering_list,
+#' 				  add_noise=FALSE) #crucial arg to compute missing variance properly!
+#' noise_variances2<- matrixStats::colVars(brca-X_r2)
+#' X_s2<- get_cloned_dataset(brca, lvl2$hcluster_blockPCA, 
+#'				lvl2$hclustering_list,
+#'				cloned_PC_N,
+#' 				noise_variances= noise_variances2)
+#'
+#' ## 1 lvl HCS(f): metalog distribution fitting on PCs 
+#' PC_generator_matrix( lvl1$cluster_blockPCA) -> PCmat1
+#' meta_list<- list()
+#' for (j in 1:ncol(PCmat1))  rmetalog::metalog(PCmat1[,j], term_limit=5, step_len=.01) -> meta_list[[j]]
+#' HN_PCmat<- hidden_normalPC_matrix(PCmat1, meta_list, rep(5, length(meta_list) ) )
+#' ### note: we can generate any number of samples, say 1000
+#' cloned_metaPC<- cloned_metalogPC_matrix(HN_PCmat, meta_list, rep(5, length(meta_list)),  n_samples= 1000 )
+#' #compute missing variancce of 1lvl rec.
+#' X_r1<- get_full_reconstruction(brca, lvl1$cluster_blockPCA, lvl1$clustering_list,
+#' 				  add_noise=FALSE)
+#' noise_variances1<- matrixStats::colVars(brca-X_r1)
+#' X_s1<- get_cloned_dataset(brca, lvl1$cluster_blockPCA, 
+#'				lvl1$clustering_list,
+#'				cloned_metaPC,
+#' 				noise_variances= noise_variances1)
+#' @export
 
-get_cloned_reconstruction<- function(X,hcluster_blockPCA, hclustering_list, cloned_PCmatrix, noise_variances=NULL, uncenter=TRUE) {
 
-g<-get_max_g(hclustering_list)
-print(g)
-Xg<- X
+
+get_cloned_dataset<- function(X,hcluster_blockPCA, hclustering_list, cloned_PCmatrix, noise_variances=NULL, uncenter=TRUE) {
+
+g<-get_max_lvl(hclustering_list)
+
+Xg<- matrix(nrow=nrow(cloned_PCmatrix), ncol=ncol(X))
 Xg[,]=0  #placeholder for the reconstruction of gth order
 
 for (g_j in 1:g) {
 	get_partition_at_g( hclustering_list, g_j) -> g_j_clustering
-	X_g_j <- X
+	X_g_j <- Xg
 	X_g_j[,]=0
 	hcluster_blockPCA[ names(g_j_clustering) ]-> g_j_blocks
 	names(g_j_blocks) <- names(g_j_clustering)

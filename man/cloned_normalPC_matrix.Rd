@@ -4,13 +4,18 @@
 \alias{cloned_normalPC_matrix}
 \title{Get set generator PCs correlated like reference ones}
 \usage{
-cloned_normalPC_matrix(reference_PC_gen_matrix)
+cloned_normalPC_matrix(
+  reference_PC_gen_matrix,
+  n_samples = nrow(reference_PC_gen_matrix)
+)
 }
 \arguments{
 \item{reference_PC_gen_matrix}{A matrix of PCs of clusters and subclusters which correlations are to be replicated, such as one prouced by \code{PC_generator_matrix}}
+
+\item{n_samples}{Number of samples to generate, defaults to the number of rows of \code{reference_PC_gen_matrix}.}
 }
 \value{
-A matrix of the same dimensions as input one, containing synthetic PCs from normal distribution with identical covariance as reference ones but independent of original ones.
+A matrix of with same number of columns as input one, containing synthetic PCs from normal distribution with identical covariance as reference ones but independent of original ones, with number of rows specified by \code{n_samples}.
 }
 \description{
 Get set generator PCs correlated like reference ones

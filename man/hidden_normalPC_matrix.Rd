@@ -14,7 +14,7 @@ hidden_normalPC_matrix(reference_PC_gen_matrix, target_metalogs, target_terms)
 \item{target_terms}{A vector of numbers of terms to use in applying each metalog transformation of the same length as \code{target_metalogs}.}
 }
 \value{
-A matrix of the same dimensions as \code{reference_PC_gen_matrix}, containing transformed variables from input matrix.
+A matrix of the same dimensions as \code{reference_PC_gen_matrix}, containing transformed variables from input matrix, with same column names.
 }
 \description{
 Generate matrix of PCs transformed to normal distribution
