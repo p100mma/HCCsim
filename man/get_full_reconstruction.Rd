@@ -13,19 +13,33 @@ get_full_reconstruction(
 )
 }
 \arguments{
-\item{X}{l}
+\item{X}{A matrix containing dataset where columns are variables and rows are samples.}
 
-\item{hcluster_blockPCA}{l}
+\item{hcluster_blockPCA}{Reconstructions of blocks defined by clusters from \code{hclustering_list}. Produced by \code{sublusterNreconstruct} or by \code{initial_clusterNreconstruct} or \code{blockwise_PCA_reconstruction}.}
 
-\item{hclustering_list}{l}
+\item{hclustering_list}{A list encoding cluster membership, such as one produced by \code{subclusterNreconstruct} or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}.}
 
-\item{add_noise}{l}
+\item{add_noise}{If \code{TRUE}, missing variance of reconstructed variables will be complemented by an adequate amount of random noise.}
 
-\item{uncenter}{l}
+\item{uncenter}{If \code{TRUE}, the means of variables in \code{X} will be added to corresponding variables in reconstruction.}
 }
 \value{
 A matrix \code{Xg} which is the \code{g}-th order hierarchical clustering reconstruction of correlated variables in \code{X}, where \code{g} is the number of levels in \code{hclustering_list} and \code{hcluster_blockPCA}.
 }
 \description{
 Given a HCD (hierarchical clustering decomposion of correlation structure) of a dataset, generate it's reconstruction (HCR) based on that HCD.
+}
+\examples{
+data(brca)
+data(brca_clusters)
+lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+			        clustering_vector=brca_clusters)
+lvl2<- subclusterNreconstruct(X=brca,
+				 X_variances= matrixStats::colVars(brca),
+				 hclustering_list= lvl1$clustering_list,
+                              hcluster_PCA_blocks=lvl1$cluster_blockPCA,
+                              clfun2=similarity_based_hclust,
+                              clfun2OtherArgs_constant=list(method="complete" ),
+			 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+X_2<- get_full_reconstruction(brca, lvl2$hcluster_blockPCA, lvl2$hclustering_list)
 }

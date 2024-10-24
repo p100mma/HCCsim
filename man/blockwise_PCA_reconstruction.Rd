@@ -22,16 +22,16 @@ A \code{list} with one element per cluster in \code{clustering_list}. Each such 
 \itemize{
 \item \code{location} A vector of indexes of reconstructed columns in the block as placed in \code{A}.
 \item \code{total_var} Real number, total variance of the block.
-\item \code{pc_var}
-\item \code{cumul_var}
-\item \code{k_used}
-\item \code{k_f}
-\item \code{f}
-\item \code{saturated}
-\item \code{var_explained}
-\item \code{PC}
-\item \code{Vt}
-\item \code{reconstruction}
+\item \code{pc_var} Variances of all PCs of each block.
+\item \code{cumul_var} Vector of cumulative variances of all PCs.
+\item \code{k_used} Number of PCs used (can be less than \code{k} )
+\item \code{k_f} Number of PCs one would have to use to explain target fraction \code{f} of total variance.
+\item \code{f} Same as input argument.
+\item \code{saturated} True if total variance was fully explained with \code{k_used} PCs.
+\item \code{var_explained} How much variance in total was explained.
+\item \code{PC} Matrix of PCs used for reoconstruction, has \code{k2use} columns, one per each PC.
+\item \code{Vt} Coefficients of PCs used for reconstruction.
+\item \code{reconstruction} Reconstructed data using \code{PC} and \code{Vt}.
 }
 }
 \description{

@@ -18,7 +18,7 @@ A \code{clustering_list} describing division into the clusters at lvl \code{g} o
 Extract \code{clustering_list} describing division into the clusters at specified lvl of hierarchy of \code{hclustering_list}
 }
 \examples{
-base_cl<- HCCsim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
 				    domain_size= 15,   #4 clusterless nodes implied
 				    params=list(base_param=1) )
 subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))

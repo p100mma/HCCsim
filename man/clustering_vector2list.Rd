@@ -17,5 +17,5 @@ Function converts a vector of numeric labels to the \code{clustering_list} repre
 }
 \examples{
 data(brca_clusters)
-clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params= =list(algorithm='mcl', inflation=2)) )
+clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params =list(algorithm='mcl', inflation=2)) )
 }

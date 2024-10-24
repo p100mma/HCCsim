@@ -17,3 +17,15 @@ An updated matrix \code{Xg} with random noise added to each of the columns.
 \description{
 Add \code{E_i} of noise from normal distribution to each reconstructed variable \code{Xg_i} such that \code{var(Xg_i)==var(X_i)} where \code{X_i} is a reference variable.
 }
+\examples{
+data(brca)
+data(brca_clusters)
+lvl1<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(brca),
+			        clustering_vector=brca_clusters)
+rec<- brca
+rec[,]=0
+rec= allocate_blocks( rec, lvl1$cluster_blockPCA)
+max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #missing variances
+rec=add_noise(rec, brca)
+max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #after complementing with random noise
+}

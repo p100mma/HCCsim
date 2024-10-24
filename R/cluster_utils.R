@@ -163,7 +163,7 @@ check_HCCSim_clustering_list(clist)
 #' @return A list with named elements with one element per proper cluster, where each element is integer vector of indexes of nodes. An object of class \code{HCCSim_clustering_list}.
 #' @examples
 #' data(brca_clusters)
-#' clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params= =list(algorithm='mcl', inflation=2)) )
+#' clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params =list(algorithm='mcl', inflation=2)) )
 #' @export
 
 

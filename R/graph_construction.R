@@ -108,7 +108,8 @@ corData
 rcorrData<- function(D, rcorr.method='pearson',
 			p.adjust.method='holm'){
 rcorr_object<- rcorr(D, type= rcorr.method)
-ltr<-rcorr_object$r[lower.tri(rcorr_object$r)]
+r<-rcorr_object$r
+ltr<-lower.tri(r)
 corData<- list()
 corData$N= ncol(D)
 corData$r = rcorr_object$r[ltr]

@@ -19,30 +19,34 @@ subclusterNreconstruct(
 )
 }
 \arguments{
-\item{X}{l}
+\item{X}{A matrix containing dataset where columns are variables and rows are samples.}
 
-\item{X_variances}{l}
+\item{X_variances}{Precomputed variances of \code{X}.}
 
-\item{hclustering_list}{l}
+\item{hclustering_list}{A list encoding cluster membership, such as one produced by this function or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}. Clusters at the lowest level will be subdivided and reconstructed.}
 
-\item{hcluster_PCA_blocks}{l}
+\item{hcluster_PCA_blocks}{Corresponding reconstructions of blocks defined by clusters from \code{hclustering_list}. Produced by this function or by \code{initial_clusterNreconstruct} or \code{blockwise_PCA_reconstruction}.}
 
-\item{k}{l}
+\item{k}{Maximum number of principal components to use for reconstructing each cluster.}
 
-\item{f}{l}
+\item{f}{Target fraction of variance to explain (of the proper clusters).}
 
-\item{clfun2}{l}
+\item{clfun2}{Clustering function to group residuals of each innermost cluster of \code{hclustering_list} based on magnitude of their correlations. Must receive similarity matrix as a first argument. Best clustering from several different settings will be picked by maximizing \code{normalized_cl_entropy()} value.}
 
-\item{clfun2OtherArgs_constant}{l}
+\item{clfun2OtherArgs_constant}{List of named arguments of \code{clfun2} apart from similarity matrix, which shall be kept constant across different candidate settings to test.}
 
-\item{clfun2OtherArgs_ranges}{l}
+\item{clfun2OtherArgs_ranges}{A list of named vectors of parameters to test. Each named vector in the list shall have the same length. Names of the vectors should correspond to values of named arguments of \code{clfun2}. At step \code{i}, settings of \code{clfun2} are tested defined by \code{i}-th entry of each named vector in that list. Finally, for each cluster, setting maximizing value of \code{normalized_cl_entropy()} function will be chosen as definitive subdivision to use.}
 
-\item{S_power}{l}
+\item{S_power}{A value of exponent which to use for transforming correlation of residuals to similarity by \code{abs(cor_matrix)^S_power}.}
 
-\item{corfun}{l}
+\item{corfun}{A function to compute correlation of residuals of each cluster. Must accept matrix as its only argument (where columns are variables and rows are samples.}
 }
 \value{
-A \code{list}
+A \code{list} with following elements:
+\itemize{
+\item \code{hclustering_list} An expanded list representing resulting hierarchical clustering, it contains additional clusters that resulted from subdivision.
+\item \code{hcluster_blockPCA} A \code{k}-th order clustering based reconstruction of residuals of reconstructions of previous level (determined by input \code{hcluster_blockPCA}. It is expanded by including reconstructions of subclusters added to expanded \code{hclustering_list}.
+}
 }
 \description{
 Subdivide clusters in the innermost layer of hierarchical clustering and reconstruct the residuals in the subdivided clusters

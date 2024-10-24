@@ -17,3 +17,9 @@ A matrix of generated samples from a mutlivariate normal distribution with covar
 \description{
 Generate samples from multivariate normal distribution with a given covariance
 }
+\examples{
+data(brca)
+multivariate_normal_cholesky( cov(brca[,1:300] ), 600) -> gen_data
+dim(gen_data)
+MSE(cov(brca[,1:300]), cov(gen_data) )
+}

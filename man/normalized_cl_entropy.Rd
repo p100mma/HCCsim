@@ -16,7 +16,7 @@ A real number giving the entropy of proportions of groups in the input.
 Calculate entropy of a division of a set into groups
 }
 \examples{
-base_cl<- HCCsim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
 				    params=list(base_param=1) )
 normalized_cl_entropy(base_cl)
 }
