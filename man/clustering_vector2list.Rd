@@ -19,3 +19,6 @@ Function converts a vector of numeric labels to the \code{clustering_list} repre
 data(brca_clusters)
 clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params =list(algorithm='mcl', inflation=2)) )
 }
+\seealso{
+\code{\link[=HCCSim_clustering_vector]{HCCSim_clustering_vector()}}, \code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} and \code{\link[=clustering_list2vector]{clustering_list2vector()}}
+}

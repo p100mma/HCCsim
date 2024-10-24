@@ -11,6 +11,7 @@
 #' @references Pereira B, Chin   SF, Rueda   OM  et al.   The somatic mutation profiles of 2,433 breast cancers refine their genomic and transcriptomic landscapes. Nat Commun  2016;7:11479
 #'
 #' @source \url{https://ega-archive.org/studies/EGAS00000000083}
+#' @seealso [brca_clusters] for precomputed clustering of genes in this data
 #' @examples 
 #' data(brca)
 #' dim(brca)

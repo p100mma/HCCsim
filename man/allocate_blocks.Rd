@@ -26,3 +26,6 @@ brca_rec<- brca
 brca_rec[,]=0
 brca_rec= allocate_blocks( brca_rec, blocks_brca)
 }
+\seealso{
+\code{\link[=blockwise_PCA_reconstruction]{blockwise_PCA_reconstruction()}}
+}

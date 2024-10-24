@@ -48,3 +48,6 @@ result<- initial_clusterNreconstruct(X= brca, X_variances=matrixStats::colVars(b
 lapply(result$clustering_list, length)
 length(result$cluster_blockPCA)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} and \code{\link[=HCCSim_clustering_vector]{HCCSim_clustering_vector()}} for how input data should look like, \code{\link[=blockwise_PCA_reconstruction]{blockwise_PCA_reconstruction()}} and \code{\link[=calculate_f]{calculate_f()}} for individual component functions used by this one
+}

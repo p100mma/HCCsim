@@ -7,7 +7,7 @@
 PC_generator_matrix(hcluster_blockPCA)
 }
 \arguments{
-\item{\code{hcluster_blockPCA}}{A list of blockwise PCA reconstruction of clusters and subclusters as obtained and \code{subdivideNreconstruct} function.}
+\item{\code{hcluster_blockPCA}}{A list of blockwise PCA reconstruction of clusters and subclusters as obtained and \code{subclusterNreconstruct} function.}
 }
 \value{
 A matrix with all prinicipal components inside each block of \code{hcluster_blockPCA} structure. Column names give tuples of clusters to which each prinicipal component belongs.
@@ -30,4 +30,7 @@ lvl2<- subclusterNreconstruct(X=brca,
 PC_generator_matrix( lvl2$hcluster_blockPCA) -> PCmat
  #note: no correlations between base clusters and subclusters.
 heatmap( sqrt(abs(cor(PCmat))), Colv=NA, Rowv=NA)
+}
+\seealso{
+\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}}, \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} for how input data should look like
 }

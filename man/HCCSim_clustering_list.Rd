@@ -36,3 +36,6 @@ for (i in labels)
    input_list[[i]]<- which(brca_clusters==i)
 HCCSim_clustering_list(x= input_list, domain_size=length(brca_clusters),  params=list(algorithm='mcl', inflation=2)) 
 }
+\seealso{
+\code{\link[=HCCSim_clustering_vector]{HCCSim_clustering_vector()}} and \code{\link[=clustering_list2vector]{clustering_list2vector()}}
+}

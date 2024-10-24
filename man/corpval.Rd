@@ -22,3 +22,6 @@ data(brca)
 C<- corfast(brca)
 pv<- corpval(C[lower.tri(C)], nrow(brca))
 }
+\seealso{
+\code{\link[=corfast]{corfast()}} and \code{\link[=fastPearsonData]{fastPearsonData()}} for fast correlation coefficient calculation
+}

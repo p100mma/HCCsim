@@ -20,3 +20,6 @@ base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2
 				    params=list(base_param=1) )
 normalized_cl_entropy(base_cl)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} for how input data should look like
+}

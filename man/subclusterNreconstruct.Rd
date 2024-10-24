@@ -39,7 +39,7 @@ subclusterNreconstruct(
 
 \item{S_power}{A value of exponent which to use for transforming correlation of residuals to similarity by \code{abs(cor_matrix)^S_power}.}
 
-\item{corfun}{A function to compute correlation of residuals of each cluster. Must accept matrix as its only argument (where columns are variables and rows are samples.}
+\item{corfun}{A function to compute correlation of residuals of each cluster. Must accept matrix as its 1st argument (where columns are variables and rows are samples.}
 }
 \value{
 A \code{list} with following elements:
@@ -63,4 +63,7 @@ lvl2<- subclusterNreconstruct(X=brca,
                               clfun2=similarity_based_hclust,
                               clfun2OtherArgs_constant=list(method="complete" ),
 			 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+}
+\seealso{
+\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for 1st stage clustering and reconstruction, \code{\link[=subdivide_cluster]{subdivide_cluster()}} or \code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}}, \code{\link[=blockwise_PCA_reconstruction]{blockwise_PCA_reconstruction()}} for how input clustering and clusterwise PCA blocks should look like, \code{\link[=similarity_based_hclust]{similarity_based_hclust()}} for how a function suitable for \code{clfun2} argument should look like, \code{\link[=corfast]{corfast()}} for efficient correlation calculation that can be used fo \code{corfun}
 }

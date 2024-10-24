@@ -24,3 +24,6 @@ lapply(cl_list, length)
 clustering_list2vector(cl_list) -> cl_vec2
 all( cl_vec == cl_vec2)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_vector]{HCCSim_clustering_vector()}}, \code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} and \code{\link[=clustering_vector2list]{clustering_vector2list()}}
+}

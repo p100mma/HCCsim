@@ -43,3 +43,6 @@ lvl2<- subclusterNreconstruct(X=brca,
 			 clfun2OtherArgs_ranges= list(n_group=2:7)) 
 X_2<- get_full_reconstruction(brca, lvl2$hcluster_blockPCA, lvl2$hclustering_list)
 }
+\seealso{
+\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}}, \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} for main functions producing suitable input data for this function
+}

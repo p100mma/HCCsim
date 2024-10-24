@@ -34,3 +34,7 @@ C<-t(C)
 C[lower.tri(C)]= brca_corData$r
 diag(C)=1
 }
+\seealso{
+\code{\link[=corfast]{corfast()}}, \code{\link[=corpval]{corpval()}} for individual component functions, \code{\link[=rcorrData]{rcorrData()}} for alternative using \code{rcorr} package,
+\code{\link[=similarity_matrix]{similarity_matrix()}} for creating similarity matrix out of output of this function
+}

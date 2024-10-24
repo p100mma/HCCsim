@@ -29,3 +29,6 @@ max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #missing variances
 rec=add_noise(rec, brca)
 max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #after complementing with random noise
 }
+\seealso{
+\code{\link[=get_full_reconstruction]{get_full_reconstruction()}} for function preforming complete reconstruction based on HCR, \code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}}, \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}}, \code{\link[=allocate_blocks]{allocate_blocks()}} for how to prepare initial reconstruction
+}

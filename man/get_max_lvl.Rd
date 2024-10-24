@@ -25,3 +25,6 @@ subdivide_cluster( base_cl, '1', subdivision1)-> hcl
 subdivide_cluster( hcl, '3', subdivision2)-> hcl
 get_max_lvl(hcl)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} , \code{\link[=subdivide_cluster]{subdivide_cluster()}} for how input data should look like
+}

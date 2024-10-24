@@ -19,3 +19,10 @@ This function will generally perform faster than base R \code{cor}, provided one
 data(brca)
 C<- corfast(brca)
 }
+\references{
+\link{1}  M Flight, Robert. 2023. “Installing OpenBLAS for Self-Compiled R.” November 1, 2023. \url{https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r}
+}
+\seealso{
+\code{\link[=corpval]{corpval()}} and \code{\link[=fastPearsonData]{fastPearsonData()}} for p-values, \href{https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r}{this link} \link{1} for how to set up OpenBLAS on Linux,
+and \href{https://github.com/david-cortes/R-openblas-in-windows}{that one} for instructions for Windows.
+}

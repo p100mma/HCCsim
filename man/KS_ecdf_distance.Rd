@@ -22,3 +22,6 @@ x<- rnorm(1000)
 y<- rnorm(1000,0.05)
 KS_dist<- KS_ecdf_distance(x, ecdf(y))
 }
+\seealso{
+\code{\link[=ecdf_distance]{ecdf_distance()}} for more general distance between \code{ecdf}s.
+}

@@ -13,6 +13,7 @@
 #' @references [1]  Piotr Stomma, Witold R Rudnicki, HCS—hierarchical algorithm for simulation of omics datasets,  Bioinformatics, Volume 40, Issue Supplement_2, September 2024, Pages ii98–ii104, \url{https://doi.org/10.1093/bioinformatics/btae392}
 #' @references [2] van Dongen, Stijn, Graph clustering via a discrete uncoupling process, Siam Journal on Matrix Analysis and Applications 30-1, p121-141, 2008
 #'
+#' @seealso [brca] for the data corresponding to the clusters
 #' @examples 
 #' data(brca_clusters)
 #' length(brca_clusters)

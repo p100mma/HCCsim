@@ -34,3 +34,7 @@ C<-t(C)
 C[lower.tri(C)]= brca_corData$r
 diag(C)=1
 }
+\seealso{
+\code{\link[=fastPearsonData]{fastPearsonData()}} for efficient version of correlation coefficient calculation for clean data, \code{\link[Hmisc:rcorr]{Hmisc::rcorr()}} for correlation function used here,
+\code{\link[=similarity_matrix]{similarity_matrix()}} for creating similarity matrix out of output of this function
+}

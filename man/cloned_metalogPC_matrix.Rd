@@ -28,7 +28,7 @@ Get a set of cloned PCs transformed to target metalog distributions based on inp
 }
 \details{
 Function will generate set of variables having same covariance as columns of \code{PChidden_normal}. Then,
-each such variable gets transformed to metalog distribution given by \code{target_metalogs[[i]]}
+each such variable gets transformed to metalog distribution \link{1} given by \code{target_metalogs[[i]]}
 (a \code{metalog} object).
 }
 \examples{
@@ -43,4 +43,10 @@ HN_PCmat<- hidden_normalPC_matrix(PCmat, meta_list, rep(5, length(meta_list) ) )
 cloned_metaPC<- cloned_metalogPC_matrix(HN_PCmat, meta_list, rep(5, length(meta_list)) )
  #note: no correlations between cloned and reference PCs
 heatmap( abs(cor(cbind(PCmat, cloned_metaPC))), Colv=NA, Rowv=NA)
+}
+\references{
+\link{1} Keelin T.  The metalog distributions. Dec Anal  2016;13:243–77.
+}
+\seealso{
+\code{\link[=hidden_normalPC_matrix]{hidden_normalPC_matrix()}}, \code{\link[=PC_generator_matrix]{PC_generator_matrix()}} ,\code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} ,\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for how to generate input data for this function, \code{\link[rmetalog:metalog]{rmetalog::metalog()}} for metalog distribution
 }

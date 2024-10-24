@@ -30,3 +30,6 @@ Clustering functions used with HCR must take as an input similarity matrix and r
 data(brca)
 table(similarity_based_hclust( cor(brca)^2, 7))
 }
+\seealso{
+\code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} for function that can use this function as one of its arguments,  \code{\link[=hclust]{hclust()}}, \code{\link[=cutree]{cutree()}}
+}

@@ -28,3 +28,6 @@ subdivide_cluster( hcl, '3', subdivision2)-> hcl
 get_partition_at_g(hcl,1)
 get_partition_at_g(hcl,2)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} , \code{\link[=subdivide_cluster]{subdivide_cluster()}} for how input data should look like
+}

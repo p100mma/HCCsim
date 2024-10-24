@@ -24,3 +24,6 @@ data(brca)
 data(brca_clusters)
 calculate_f( zeroOutSmall(brca_clusters, 30), f_E=0.7, X_variances= matrixStats::colVars(brca) )
 }
+\seealso{
+\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for more complete function that uses this one as of its steps
+}

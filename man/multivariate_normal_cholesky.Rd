@@ -23,3 +23,6 @@ multivariate_normal_cholesky( cov(brca[,1:300] ), 600) -> gen_data
 dim(gen_data)
 MSE(cov(brca[,1:300]), cov(gen_data) )
 }
+\seealso{
+\code{\link[=MSE]{MSE()}}
+}

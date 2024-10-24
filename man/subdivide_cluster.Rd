@@ -30,3 +30,6 @@ print(hcl)
 subdivide_cluster( hcl, "3", subdivision2)-> hcl
 print(hcl)
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} for how input data should look like
+}

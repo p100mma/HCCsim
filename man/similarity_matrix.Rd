@@ -35,3 +35,6 @@ brca_corData= fastPearsonData(brca)
 S= similarity_matrix( brca_corData)
 ncol(S)==ncol(brca)
 }
+\seealso{
+\code{\link[=fastPearsonData]{fastPearsonData()}} or \code{\link[Hmisc:rcorr]{Hmisc::rcorr()}} for functions creating suitable input \code{corData} argument.
+}

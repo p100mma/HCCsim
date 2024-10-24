@@ -33,6 +33,7 @@ fastTable<- function(values)
 #' @examples
 #' mem<- c(0,0,0,1,0,1,2,3,0,1,2,2,2,1,4,4,0,0)
 #' zeroOutSmall(mem,3)
+#' @seealso [tidyUpLabels()]
 #' @export
 zeroOutSmall<- function(labelV, mS) {
 rment<- labelV
@@ -54,6 +55,7 @@ return(rment)
 #' @examples
 #' mem<- c(0,0,0,1,0,1,67,3,0,1,67,67,5,5,4,4,0,0)
 #' tidyUpLabels(mem)
+#' @seealso [zeroOutSmall()]
 #' @export
 tidyUpLabels<- function(labelV) {
 uqn0<-unique(labelV[labelV!=0])
@@ -94,6 +96,7 @@ x
 #' @examples
 #' data(brca_clusters)
 #' brca_clusters<- HCCSim_clustering_vector(brca_clusters, params=list(algorithm='mcl', inflation=2))
+#' @seealso [HCCSim_clustering_list()] and [clustering_vector2list()]
 #' @export
 HCCSim_clustering_vector<- function(x= integer(), params=list()) {
 x = as.integer(x)
@@ -143,6 +146,7 @@ x
 #' for (i in labels)
 #'    input_list[[i]]<- which(brca_clusters==i)
 #' HCCSim_clustering_list(x= input_list, domain_size=length(brca_clusters),  params=list(algorithm='mcl', inflation=2)) 
+#' @seealso [HCCSim_clustering_vector()] and [clustering_list2vector()]
 #' @export
 
 HCCSim_clustering_list<- function(x=list(), domain_size=length(unlist(x)), params=list()) {
@@ -164,6 +168,7 @@ check_HCCSim_clustering_list(clist)
 #' @examples
 #' data(brca_clusters)
 #' clustering_vector2list( HCCSim_clustering_vector(brca_clusters, params =list(algorithm='mcl', inflation=2)) )
+#' @seealso [HCCSim_clustering_vector()], [HCCSim_clustering_list()] and [clustering_list2vector()]
 #' @export
 
 
@@ -192,6 +197,7 @@ HCCSim_clustering_list(init_list, domain_size= length(clustering_vector), params
 #' lapply(cl_list, length)
 #' clustering_list2vector(cl_list) -> cl_vec2
 #' all( cl_vec == cl_vec2)
+#' @seealso [HCCSim_clustering_vector()], [HCCSim_clustering_list()] and [clustering_vector2list()]
 #' @export
 clustering_list2vector<- function(clustering_list){
 init_vector<- rep(0, attr(clustering_list, 'domain_size'))

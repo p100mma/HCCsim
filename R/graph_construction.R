@@ -1,7 +1,7 @@
 
 #' Minimal optimized computation of Pearson correlation by matrix product
 #'
-#' This function will generally perform faster than base R \code{cor}, provided one uses OpenBLAS matrix multiplication backend.
+#' This function will generally perform faster than base R \code{cor}, provided one uses OpenBLAS matrix multiplication backend. 
 #'
 #' @param D Must be an object of a subclass of \code{matrix}. Rows store samples and columns - variables. No \code{NA}s allowed.
 #' @return A numeric square matrix of Pearson correlation coefficient compute between each pair of varables in \code{D}.
@@ -9,6 +9,9 @@
 #' data(brca)
 #' C<- corfast(brca)
 #' @importFrom matrixStats colSds
+#' @seealso [corpval()] and [fastPearsonData()] for p-values, \href{https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r}{this link} [1] for how to set up OpenBLAS on Linux, 
+#'	and \href{https://github.com/david-cortes/R-openblas-in-windows}{that one} for instructions for Windows.
+#' @references [1]  M Flight, Robert. 2023. “Installing OpenBLAS for Self-Compiled R.” November 1, 2023. <https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r>
 #' @export
 
 corfast<- function(D){    # n x p
@@ -34,6 +37,7 @@ tZ<-  (t(D) - D_means)/( D_sds )   # p  x n
 #' data(brca)
 #' C<- corfast(brca)
 #' pv<- corpval(C[lower.tri(C)], nrow(brca))
+#' @seealso [corfast()] and [fastPearsonData()] for fast correlation coefficient calculation
 #' @export
 
 corpval<- function(r,n){
@@ -65,6 +69,8 @@ t_stat= sqrt(n-2) * r/sqrt(1 - r^2)
 #' C<-t(C)
 #' C[lower.tri(C)]= brca_corData$r
 #' diag(C)=1
+#' @seealso [corfast()], [corpval()] for individual component functions, [rcorrData()] for alternative using \code{rcorr} package,
+#'	[similarity_matrix()] for creating similarity matrix out of output of this function
 #' @export
 
 fastPearsonData<- function(D, NA.warn=TRUE, p.adjust.method="holm") {
@@ -103,6 +109,8 @@ corData
 #' C[lower.tri(C)]= brca_corData$r
 #' diag(C)=1
 #' @importFrom Hmisc rcorr
+#' @seealso [fastPearsonData()] for efficient version of correlation coefficient calculation for clean data, [Hmisc::rcorr()] for correlation function used here,
+#'	[similarity_matrix()] for creating similarity matrix out of output of this function
 #' @export
 
 rcorrData<- function(D, rcorr.method='pearson',
@@ -133,6 +141,7 @@ corData
 #' brca_corData= fastPearsonData(brca)
 #' S= similarity_matrix( brca_corData)
 #' ncol(S)==ncol(brca)
+#' @seealso  [fastPearsonData()] or [Hmisc::rcorr()] for functions creating suitable input \code{corData} argument.
 #' @export
 
 similarity_matrix<- function( corData, addLoops=TRUE, 

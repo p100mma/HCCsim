@@ -13,10 +13,19 @@ ccfast(A)
 A vector of clustering coefficients - weighted version of the clustering coefficient designed for weighted correlation networks, as proposed by \code{WGCNA} methodology.
 }
 \description{
-This function produces clustering coefficient from similarity matrix just like \code{clusterCoef} from \code{WGCNA} package. It is however (experimentally) much more time efficient because it explicitly involves a (matrix-matrix) matrix product. Speed up is drastic if R uses efficient matrix multiplication backend like OpenBLAS.
+This function produces clustering coefficient from similarity matrix just like \code{clusterCoef} from \code{WGCNA} package \link{2}. It is however (experimentally) much more time efficient because it explicitly involves a (matrix-matrix) matrix product. Speed up is drastic if R uses efficient matrix multiplication backend like OpenBLAS.
 }
 \examples{
 data(brca)
 S<- similarity_matrix(fastPearsonData(brca))
 cc<- ccfast(S)
+}
+\references{
+\link{1}  M Flight, Robert. 2023. “Installing OpenBLAS for Self-Compiled R.” November 1, 2023. \url{https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r}
+
+\link{2} Langfelder P, Horvath S (2008). “WGCNA: an R package for weighted correlation network analysis.” BMC Bioinformatics, 559. \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-559}
+}
+\seealso{
+\href{https://rmflight.github.io/posts/2023-11-01-installing-openblas-for-selfcompiled-r}{this link} \link{1} for how to set up OpenBLAS on Linux,
+and \href{https://github.com/david-cortes/R-openblas-in-windows}{that one} for instructions for Windows.
 }

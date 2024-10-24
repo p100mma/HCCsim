@@ -37,3 +37,6 @@ cloned_PC<- cloned_normalPC_matrix(PCmat)
  #note: no correlations between cloned and reference PCs
 heatmap( abs(cor(cbind(PCmat, cloned_PC))), Colv=NA, Rowv=NA)
 }
+\seealso{
+\code{\link[=PC_generator_matrix]{PC_generator_matrix()}}, \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}}, \code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for how input data should look like, \code{\link[=multivariate_normal_cholesky]{multivariate_normal_cholesky()}} for data gen. method, \code{\link[=cloned_metalogPC_matrix]{cloned_metalogPC_matrix()}} for more elaborate simulation of PCs
+}

@@ -19,3 +19,6 @@ Based on input integer label vector, normalize labels such that if there are \co
 mem<- c(0,0,0,1,0,1,67,3,0,1,67,67,5,5,4,4,0,0)
 tidyUpLabels(mem)
 }
+\seealso{
+\code{\link[=zeroOutSmall]{zeroOutSmall()}}
+}

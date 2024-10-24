@@ -25,3 +25,6 @@ y<- rnorm(1000,0.05)
 diffs<- ecdf_distance(x, ecdf(y))
 mean_dist<- ecdf_distance(x, ecdf(y), mean)
 }
+\seealso{
+\code{\link[=KS_ecdf_distance]{KS_ecdf_distance()}} for specific version of this function
+}

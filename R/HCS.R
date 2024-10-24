@@ -2,7 +2,7 @@
 
 #' Extract matrix of principal components of all clusters of HCD
 #' 
-#' @param \code{hcluster_blockPCA} A list of blockwise PCA reconstruction of clusters and subclusters as obtained and \code{subdivideNreconstruct} function.
+#' @param \code{hcluster_blockPCA} A list of blockwise PCA reconstruction of clusters and subclusters as obtained and \code{subclusterNreconstruct} function.
 #' @return A matrix with all prinicipal components inside each block of \code{hcluster_blockPCA} structure. Column names give tuples of clusters to which each prinicipal component belongs.
 #' @examples
 #' data(brca)
@@ -19,6 +19,7 @@
 #' PC_generator_matrix( lvl2$hcluster_blockPCA) -> PCmat
 #'  #note: no correlations between base clusters and subclusters.
 #' heatmap( sqrt(abs(cor(PCmat))), Colv=NA, Rowv=NA)
+#' @seealso [initial_clusterNreconstruct()], [subclusterNreconstruct()] for how input data should look like
 #' @export
 
 PC_generator_matrix<- function(hcluster_blockPCA){
@@ -43,6 +44,7 @@ all_PC
 #' multivariate_normal_cholesky( cov(brca[,1:300] ), 600) -> gen_data
 #' dim(gen_data)
 #' MSE(cov(brca[,1:300]), cov(gen_data) )
+#' @seealso [MSE()]
 #' @export
 
 multivariate_normal_cholesky<- function( sigma, n_samples){
@@ -73,6 +75,7 @@ t( L %*% t(Z) )
 #' cloned_PC<- cloned_normalPC_matrix(PCmat)
 #'  #note: no correlations between cloned and reference PCs
 #' heatmap( abs(cor(cbind(PCmat, cloned_PC))), Colv=NA, Rowv=NA)
+#' @seealso [PC_generator_matrix()], [subclusterNreconstruct()], [initial_clusterNreconstruct()] for how input data should look like, [multivariate_normal_cholesky()] for data gen. method, [cloned_metalogPC_matrix()] for more elaborate simulation of PCs
 #' @export
 
 
@@ -94,7 +97,7 @@ qnorm(  pmetalog( m=target_metalog, q=ref_PC, term=term)  , 0,1)
 #' Generate matrix of PCs transformed to normal distribution
 #'
 #' @details
-#' First, each \code{reference_PC_gen_matrix[,i]} gets transformed by applying CDF of metalog distribution
+#' First, each \code{reference_PC_gen_matrix[,i]} gets transformed by applying CDF of metalog [1] distribution
 #' stored in \code{target_metalogs[i]} ( \code{metalog} object) using \code{target_terms[i]} terms.
 #' Then, variable number \code{i} is pulled under standard normal distribution by applying inverse of its 
 #' cumulative distribution function.
@@ -116,6 +119,8 @@ qnorm(  pmetalog( m=target_metalog, q=ref_PC, term=term)  , 0,1)
 #' par(mfrow=c(1,2))
 #' hist(PCmat[,1])
 #' hist(HN_PCmat[,1])
+#' @seealso [PC_generator_matrix()] ,[subclusterNreconstruct()] ,[initial_clusterNreconstruct()] for how to generate input data for this function, [rmetalog::metalog()] for metalog distribution
+#' @references [1] Keelin T.  The metalog distributions. Dec Anal  2016;13:243–77.
 #' @export
 
 hidden_normalPC_matrix<- function(reference_PC_gen_matrix, target_metalogs, target_terms) {
@@ -142,7 +147,7 @@ qmetalog( target_metalog_distr, y= u, term=term)
 #'
 #' @details
 #' Function will generate set of variables having same covariance as columns of \code{PChidden_normal}. Then, 
-#' each such variable gets transformed to metalog distribution given by \code{target_metalogs[[i]]} 
+#' each such variable gets transformed to metalog distribution [1] given by \code{target_metalogs[[i]]} 
 #' (a \code{metalog} object).
 #'
 #' @param PC_hidden_normal A matrix of which covariance is computed and replicated in output data. Column names of that matrix get copied to the output one.
@@ -162,6 +167,8 @@ qmetalog( target_metalog_distr, y= u, term=term)
 #' cloned_metaPC<- cloned_metalogPC_matrix(HN_PCmat, meta_list, rep(5, length(meta_list)) )
 #'  #note: no correlations between cloned and reference PCs
 #' heatmap( abs(cor(cbind(PCmat, cloned_metaPC))), Colv=NA, Rowv=NA)
+#' @seealso [hidden_normalPC_matrix()], [PC_generator_matrix()] ,[subclusterNreconstruct()] ,[initial_clusterNreconstruct()] for how to generate input data for this function, [rmetalog::metalog()] for metalog distribution
+#' @references [1] Keelin T.  The metalog distributions. Dec Anal  2016;13:243–77.
 #' @export
 
 
@@ -246,6 +253,7 @@ return(Xg)
 #'				lvl1$clustering_list,
 #'				cloned_metaPC,
 #' 				noise_variances= noise_variances1)
+#' @seealso [cloned_normalPC_matrix()], [cloned_metalogPC_matrix()] for how to generate synthetic PCs, [subclusterNreconstruct()] ,[initial_clusterNreconstruct()] for how to generate input data for this function, [get_full_reconstruction()] for reconstructing original data and producing output data correlated with original
 #' @export
 
 

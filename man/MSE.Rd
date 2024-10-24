@@ -20,3 +20,6 @@ Compute mean squared error between two vectors
 \examples{
 MSE( c(1,2,3), c(3,2,1) )
 }
+\seealso{
+\code{\link[=SE]{SE()}}
+}

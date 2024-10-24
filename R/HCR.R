@@ -30,6 +30,7 @@
 #' data(brca_clusters)
 #' cl_list<- clustering_vector2list( brca_clusters ) 
 #' blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
+#' @seealso [allocate_blocks()] for placing reconstructed blocks in original layout and [initial_clusterNreconstruct()] and [subclusterNreconstruct()] for more elaborate reconstruction functions
 #' @export
 
 blockwise_PCA_reconstruction<- function(A,A_variances, clustering_list, f, k){
@@ -80,6 +81,7 @@ blockwise_PCA_reconstruction<- function(A,A_variances, clustering_list, f, k){
 #' brca_rec<- brca
 #' brca_rec[,]=0
 #' brca_rec= allocate_blocks( brca_rec, blocks_brca)
+#' @seealso [blockwise_PCA_reconstruction()]
 #' @export
 allocate_blocks<-function( where, blockwise_PCA){
 
@@ -99,6 +101,7 @@ where
 #' data(brca)
 #' data(brca_clusters)
 #' calculate_f( zeroOutSmall(brca_clusters, 30), f_E=0.7, X_variances= matrixStats::colVars(brca) )
+#' @seealso [initial_clusterNreconstruct()] for more complete function that uses this one as of its steps
 #' @export
 
 calculate_f<- function( clustering_vector, f_E, X_variances){
@@ -139,6 +142,7 @@ calculate_f<- function( clustering_vector, f_E, X_variances){
 #'				        clustering_vector=brca_clusters)
 #' lapply(result$clustering_list, length)
 #' length(result$cluster_blockPCA)
+#' @seealso [HCCSim_clustering_list()] and [HCCSim_clustering_vector()] for how input data should look like, [blockwise_PCA_reconstruction()] and [calculate_f()] for individual component functions used by this one
 #' @export
 
 initial_clusterNreconstruct<- function(X, 
@@ -222,6 +226,7 @@ initial_clusterNreconstruct<- function(X,
 #' print(hcl)
 #' subdivide_cluster( hcl, "3", subdivision2)-> hcl
 #' print(hcl)
+#' @seealso [HCCSim_clustering_list()] for how input data should look like
 #' @export
 
 
@@ -263,6 +268,7 @@ p.<-function(str_tuple) unlist(strsplit(str_tuple, split=','))
 #' subdivide_cluster( base_cl, '1', subdivision1)-> hcl
 #' subdivide_cluster( hcl, '3', subdivision2)-> hcl
 #' get_max_lvl(hcl)
+#' @seealso [HCCSim_clustering_list()] , [subdivide_cluster()] for how input data should look like
 #' @export
 
 get_max_lvl<- function(hclustering_list){
@@ -287,6 +293,7 @@ names(hclustering_list)-> all_tuples
 #' subdivide_cluster( hcl, '3', subdivision2)-> hcl
 #' get_partition_at_g(hcl,1)
 #' get_partition_at_g(hcl,2)
+#' @seealso [HCCSim_clustering_list()] , [subdivide_cluster()] for how input data should look like
 #' @export
 
 get_partition_at_g<- function( hclustering_list,
@@ -310,6 +317,7 @@ names(hclustering_list)-> all_tuples
 #' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
 #' 				    params=list(base_param=1) )
 #' normalized_cl_entropy(base_cl)
+#' @seealso [HCCSim_clustering_list()] for how input data should look like
 #' @export
 
 normalized_cl_entropy<- function( clustering_list ) {
@@ -331,6 +339,7 @@ normalized_cl_entropy<- function( clustering_list ) {
 #' @examples
 #' data(brca)
 #' table(similarity_based_hclust( cor(brca)^2, 7))
+#' @seealso [subclusterNreconstruct()] for function that can use this function as one of its arguments,  [hclust()], [cutree()]
 #' @export 
 
 similarity_based_hclust<- function( similarity_matrix, n_group, max_sim=1, method="complete") {
@@ -353,7 +362,7 @@ clvec
 #' @param clfun2OtherArgs_constant List of named arguments of \code{clfun2} apart from similarity matrix, which shall be kept constant across different candidate settings to test.
 #' @param clfun2OtherArgs_ranges A list of named vectors of parameters to test. Each named vector in the list shall have the same length. Names of the vectors should correspond to values of named arguments of \code{clfun2}. At step \code{i}, settings of \code{clfun2} are tested defined by \code{i}-th entry of each named vector in that list. Finally, for each cluster, setting maximizing value of \code{normalized_cl_entropy()} function will be chosen as definitive subdivision to use.
 #' @param S_power A value of exponent which to use for transforming correlation of residuals to similarity by \code{abs(cor_matrix)^S_power}.
-#' @param corfun A function to compute correlation of residuals of each cluster. Must accept matrix as its only argument (where columns are variables and rows are samples.
+#' @param corfun A function to compute correlation of residuals of each cluster. Must accept matrix as its 1st argument (where columns are variables and rows are samples.
 #' @return A \code{list} with following elements:
 #' \itemize{
 #' \item \code{hclustering_list} An expanded list representing resulting hierarchical clustering, it contains additional clusters that resulted from subdivision.
@@ -371,6 +380,7 @@ clvec
 #'                               clfun2=similarity_based_hclust,
 #'                               clfun2OtherArgs_constant=list(method="complete" ),
 #'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
+#' @seealso [initial_clusterNreconstruct()] for 1st stage clustering and reconstruction, [subdivide_cluster()] or [HCCSim_clustering_list()], [blockwise_PCA_reconstruction()] for how input clustering and clusterwise PCA blocks should look like, [similarity_based_hclust()] for how a function suitable for \code{clfun2} argument should look like, [corfast()] for efficient correlation calculation that can be used fo \code{corfun} 
 #' @export
 
 subclusterNreconstruct<- function(X,
@@ -494,6 +504,7 @@ for (K in unsaturated_tuples) {
 #' max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #missing variances
 #' rec=add_noise(rec, brca)
 #' max( matrixStats::colVars(brca) - matrixStats::colVars(rec) ) #after complementing with random noise
+#' @seealso [get_full_reconstruction()] for function preforming complete reconstruction based on HCR, [initial_clusterNreconstruct()], [subclusterNreconstruct()], [allocate_blocks()] for how to prepare initial reconstruction
 #' @export
 
 add_noise<- function( Xg, X) {
@@ -532,6 +543,7 @@ return(Xg)
 #'                               clfun2OtherArgs_constant=list(method="complete" ),
 #'				 clfun2OtherArgs_ranges= list(n_group=2:7)) 
 #' X_2<- get_full_reconstruction(brca, lvl2$hcluster_blockPCA, lvl2$hclustering_list)
+#' @seealso [initial_clusterNreconstruct()], [subclusterNreconstruct()] for main functions producing suitable input data for this function
 #' @export
 
 get_full_reconstruction<- function(X,hcluster_blockPCA, hclustering_list, add_noise=TRUE, uncenter=TRUE) {

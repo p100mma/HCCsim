@@ -23,3 +23,6 @@ Labels of proper clusters start from 1. Zero label denotes the "noise" subset of
 data(brca_clusters)
 brca_clusters<- HCCSim_clustering_vector(brca_clusters, params=list(algorithm='mcl', inflation=2))
 }
+\seealso{
+\code{\link[=HCCSim_clustering_list]{HCCSim_clustering_list()}} and \code{\link[=clustering_vector2list]{clustering_vector2list()}}
+}

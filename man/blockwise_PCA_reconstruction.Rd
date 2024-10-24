@@ -43,3 +43,6 @@ data(brca_clusters)
 cl_list<- clustering_vector2list( brca_clusters ) 
 blocks_brca<- blockwise_PCA_reconstruction(A=brca, A_variances= matrixStats::colVars(brca), clustering_list= cl_list, f=0.6, k=3)
 }
+\seealso{
+\code{\link[=allocate_blocks]{allocate_blocks()}} for placing reconstructed blocks in original layout and \code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} and \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} for more elaborate reconstruction functions
+}

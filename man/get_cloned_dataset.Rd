@@ -81,3 +81,6 @@ X_s1<- get_cloned_dataset(brca, lvl1$cluster_blockPCA,
 			cloned_metaPC,
 				noise_variances= noise_variances1)
 }
+\seealso{
+\code{\link[=cloned_normalPC_matrix]{cloned_normalPC_matrix()}}, \code{\link[=cloned_metalogPC_matrix]{cloned_metalogPC_matrix()}} for how to generate synthetic PCs, \code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} ,\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for how to generate input data for this function, \code{\link[=get_full_reconstruction]{get_full_reconstruction()}} for reconstructing original data and producing output data correlated with original
+}

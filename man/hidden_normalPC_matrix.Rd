@@ -20,7 +20,7 @@ A matrix of the same dimensions as \code{reference_PC_gen_matrix}, containing tr
 Generate matrix of PCs transformed to normal distribution
 }
 \details{
-First, each \code{reference_PC_gen_matrix[,i]} gets transformed by applying CDF of metalog distribution
+First, each \code{reference_PC_gen_matrix[,i]} gets transformed by applying CDF of metalog \link{1} distribution
 stored in \code{target_metalogs[i]} ( \code{metalog} object) using \code{target_terms[i]} terms.
 Then, variable number \code{i} is pulled under standard normal distribution by applying inverse of its
 cumulative distribution function.
@@ -38,4 +38,10 @@ HN_PCmat<- hidden_normalPC_matrix(PCmat, meta_list, rep(5, length(meta_list) ) )
 par(mfrow=c(1,2))
 hist(PCmat[,1])
 hist(HN_PCmat[,1])
+}
+\references{
+\link{1} Keelin T.  The metalog distributions. Dec Anal  2016;13:243–77.
+}
+\seealso{
+\code{\link[=PC_generator_matrix]{PC_generator_matrix()}} ,\code{\link[=subclusterNreconstruct]{subclusterNreconstruct()}} ,\code{\link[=initial_clusterNreconstruct]{initial_clusterNreconstruct()}} for how to generate input data for this function, \code{\link[rmetalog:metalog]{rmetalog::metalog()}} for metalog distribution
 }
