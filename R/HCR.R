@@ -567,3 +567,60 @@ return(Xg)
 }
 
 
+#' Extract subclustering from hclustering_list
+#'
+#' @param cluster_tuple ID of the biggest cluster to extract from the hierarchy (in which all others will be contained)
+#' @param hclustering_list  A list encoding cluster membership, such as one produced by \code{subclusterNreconstruct} or \code{subdivide_cluster} or an instance of \code{HCCSim_clustering_list}.
+#' @param up_to Specification of number of layers of subclusters to extract that are contained in `cluster_tuple`. If `NULL`, then all subclusters nested within `cluster_tuple` cluster are extracted as separate elements of resulting list. If it exceeds number of sublayers in `cluster_tuple`, error is raised. If it is 0, then `hclustering_list[[cluster_tuple]]` is returned.
+#' @return A sublist of `hclustering_list` containing cluster `cluster_tuple` and subclusters according to `up_to`.
+#' @examples
+#' base_cl<- HCCSim_clustering_list(list( `1`= c(5,6,7,8), `2`= c(9,4,3), `3`=c(1,2,10,11) ),
+#' 				    domain_size= 15,   #4 clusterless nodes implied
+#' 				    params=list(base_param=1) )
+#' subdivision1= HCCSim_clustering_list(list(c(6,8), c(7,5) ), params=list(sub1_param=2))
+#' subdivision2= HCCSim_clustering_list(list(c(1,10), c(2,11) ), params=list(sub2_param=3))
+#' subdivide_cluster( base_cl, "1", subdivision1)-> hcl
+#' subdivide_cluster( hcl, "3", subdivision2)-> hcl
+#' subdivide_cluster( hcl, "3,1", HCCSim_clustering_list( list(c(1),c(10)), params=list(p31=3 )))-> hcl
+#' print(hcl)
+#' extract_subclustering("3",hcl,0)
+#' extract_subclustering("3",hcl,1)
+#' extract_subclustering("3",hcl,2)
+#' extract_subclustering("3",hcl,999)
+#' extract_subclustering("3",hcl)
+#' @seealso [HCCSim_hclustering_list()], [get_max_lvl()], [subdivide_cluster()]
+#' @export
+extract_subclustering<- function(cluster_tuple, hclustering_list, up_to=NULL) {
+
+	stopifnot(cluster_tuple %in% names(hclustering_list))
+	n_layers= get_max_lvl(hclustering_list)
+	# HCR.R - def of p.()
+	cluster_tuples_num<- lapply(names(hclustering_list), function(tpl) p.(tpl) )
+	cluster_lvls<- unlist(lapply(cluster_tuples_num, function(tpl) length(tpl) ))
+	names(cluster_lvls)<- names(cluster_tuples_num)<- names(hclustering_list)
+	cluster_lvl= cluster_lvls[[ cluster_tuple ]]
+	cluster_tup_num<- cluster_tuples_num[[ cluster_tuple ]]
+
+	#which clusters are subclusters of the cluster we extract?
+	subclusters_mask<-unlist( lapply( seq_along(cluster_tuples_num), function(i)
+				{
+				if (cluster_lvls[[i]]<cluster_lvl) return(FALSE)
+				
+				all(cluster_tuples_num[[i]][1:cluster_lvl] == cluster_tup_num[1:cluster_lvl])
+				
+				}
+			     )  )
+	if (is.null(up_to)) end_lvl=max(cluster_lvls[subclusters_mask]) else {
+	end_lvl=cluster_lvl + up_to 
+	}
+	#is end_lvl correct?
+	
+	if (max(cluster_lvls[subclusters_mask])<end_lvl) stop(sprintf("%s is on lvl %d, the deepest global lvl of subclusters in %s is %d, not possible to extract %d sublayers!",cluster_tuple, cluster_lvl, cluster_tuple, max(cluster_lvls[subclusters_mask]), up_to ))
+	subcluster_tuples<- names(cluster_tuples_num[ subclusters_mask ])	
+	#filter out too long tuples (longer than end_lvl)
+	subcluster_lvls<- cluster_lvls[subcluster_tuples]
+	subcluster_tuples<-subcluster_tuples[!(subcluster_lvls>end_lvl)]
+	hclustering_list[subcluster_tuples]
+}
+
+
