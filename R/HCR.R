@@ -305,6 +305,7 @@ names(hclustering_list)-> all_tuples
  stopifnot( g <= max(tuple_lengths))
  g_tuples<- all_tuples[ tuple_lengths == g ] 
  g_P<-hclustering_list [ g_tuples ] 
+ attr(g_P,"domain_size")<- attr(hclustering_list, "domain_size")
  attr(g_P,'params')<- attr(hclustering_list, 'params')
  g_P
 }
@@ -620,7 +621,10 @@ extract_subclustering<- function(cluster_tuple, hclustering_list, up_to=NULL) {
 	#filter out too long tuples (longer than end_lvl)
 	subcluster_lvls<- cluster_lvls[subcluster_tuples]
 	subcluster_tuples<-subcluster_tuples[!(subcluster_lvls>end_lvl)]
-	hclustering_list[subcluster_tuples]
+	hclustering_list[subcluster_tuples] -> subclustering_list
+	attr(hclustering_list, "params")-> attr(subclustering_list, "params")
+	attr(hclustering_list, "domain_size")-> attr(subclustering_list, "domain_size")
+	subclustering_list
 }
 
 
