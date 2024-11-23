@@ -79,7 +79,7 @@ generate_cluster_benchmark<- function(X,
 			   ) {
 if (!is.null(A)) amplitude=TRUE else amplitude=FALSE
 if (!is.null(prop_i)) inter=TRUE else inter=FALSE
-if (amplitude) stopinfot( (A >= 0) && (A <= pi) )
+if (amplitude) stopifnot( (A >= 0) && (A <= pi) )
 if (amplitude) if (is.null(noise_variances)) stop(
 	"If A is set to numeric value then noise_variances must be given"
 	)
@@ -119,9 +119,13 @@ if (amplitude) { #handle A here
 	totalVars<- colVars(X)
 	noise_shares= noise_variances/totalVars
 	cosWeights<- (1-noise_shares)^(-1/2)	
+	cosWeights[ (1-noise_shares)^(-1) < 1e-16 ] = 0
 	sinWeights<- (noise_shares)^(-1/2)	
 	pcXcoef= cos(A)*cosWeights
 	Ecoef= sin(A)*sinWeights
+	inf_pc<- !is.finite(pcXcoef)
+	inf_E<- !is.finite(Ecoef)
+	pcXcoef[ (inf_pc | inf_E ) ] <- Ecoef[ (inf_pc | inf_E ) ] <- 1
 	noise_variances= noise_variances*(Ecoef^2)
 	for (j in 1:ncol(X)) X_plain[,j] = pcXcoef[[j]]*X_plain[,j]
 
@@ -132,8 +136,9 @@ if (amplitude) { #handle A here
 	} 
 
 if (inter) { #finally, sample from indepd
-	idp_mask<- sample(c(TRUE,FALSE), nrow(X_g), replace=TRUE,
-			  prob=(prop_i, 1-prop_i))
+	idp_mask<- sample(c(TRUE,FALSE), nrow(X_plain), replace=TRUE,
+			  prob=c(prop_i, 1-prop_i))
+	print(sum(idp_mask))
 	X_plain[idp_mask,]<- X_idp[idp_mask,]	
 	}
 

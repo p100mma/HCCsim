@@ -353,6 +353,7 @@ simulate_module<- function(X, cluster_tuple,
 			   uncenter=TRUE,
 			   up_to=NULL
 			   ) {
+	cloned_PCmatrix<- cloned_PCmatrix[sample(1:nrow(cloned_PCmatrix), nrow(cloned_PCmatrix), replace=FALSE),]
 	X_s= matrix(nrow=nrow(cloned_PCmatrix), ncol= ncol(X) ) 
 	X_s[,]=0
 	colnames(X_s)<- colnames(X)
